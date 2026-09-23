@@ -3,7 +3,7 @@ project: timelines
 version: 1
 status: draft
 created: 2026-09-21
-updated: 2026-09-21
+updated: 2026-09-23
 prd_version: 1
 main_goal: speed
 top_blocker: decisions
@@ -39,7 +39,7 @@ Użytkownik chce zauważać zmiany zachodzące w życiu, ale rozproszone zdjęci
 
 | ID   | Change ID                    | Outcome (user can …)                                      | Prerequisites | PRD refs                         | Status   |
 | ---- | ---------------------------- | --------------------------------------------------------- | ------------- | -------------------------------- | -------- |
-| F-01 | google-access-foundation     | (foundation) użytkownik może rozpocząć prywatną sesję Google | —             | FR-001, Access Control           | ready    |
+| F-01 | google-access-foundation     | (foundation) użytkownik może rozpocząć prywatną sesję Google | —             | FR-001, Access Control           | planning |
 | F-02 | local-timeline-data-contract | (foundation) aplikacja ma minimalny lokalny kontrakt osi i zdjęć | —             | FR-004, FR-006, NFR              | blocked  |
 | F-03 | android-delivery-path        | (foundation) przepływ można zweryfikować jako aplikację Android | —             | FR-003, NFR, Success Criteria: Guardrails | blocked  |
 | S-01 | signed-in-timeline-list      | zalogowany użytkownik może zobaczyć listę własnych osi czasu | F-01          | US-01, FR-001, FR-002             | proposed |
@@ -80,7 +80,7 @@ What's already in place in the codebase as of `2026-09-21` (auto-researched + us
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** To pierwszy warunek całej ścieżki; odłożenie integracji dostawcy mogłoby ukryć problem dostępu do końca prac.
-- **Status:** ready
+- **Status:** planning
 
 ### F-02: Minimalny lokalny kontrakt osi i zdjęć
 
