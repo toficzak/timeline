@@ -449,14 +449,14 @@ stable account ID and honor the clear-on-logout cleanup seam.
 
 #### Automated
 
-- [x] 3.1 `flutter analyze` passes
-- [x] 3.2 `flutter test` passes with all auth tests
-- [x] 3.3 `flutter build apk --debug` completes using the final application ID
-- [x] 3.4 The documented mock-mode command starts without a Google account or network
+- [x] 3.1 `flutter analyze` passes — 1bcdf56
+- [x] 3.2 `flutter test` passes with all auth tests — 1bcdf56
+- [x] 3.3 `flutter build apk --debug` completes using the final application ID — 1bcdf56
+- [x] 3.4 The documented mock-mode command starts without a Google account or network — 1bcdf56
 
 #### Manual
 
-- [x] 3.5 Real Google sign-in completes on a configured Google-capable Android device or emulator
-- [x] 3.6 In mock mode, the app starts with the deterministic test session and does not invoke the Google account picker
-- [x] 3.7 Restart, sign-out, cancellation, unavailable services and network failure match the documented outcomes
-- [x] 3.8 `adb logcat` shows no unexpected auth crash or token leakage during verification
+- [x] 3.5 Real Google sign-in completes on a configured Google-capable Android device or emulator — 1bcdf56
+- [x] 3.6 In mock mode, the app starts with the deterministic test session and does not invoke the Google account picker — 1bcdf56
+- [x] 3.7 Restart, sign-out, cancellation, unavailable services and network failure match the documented outcomes — 1bcdf56
+- [x] 3.8 `adb logcat` shows no unexpected auth crash or token leakage during verification — 1bcdf56
