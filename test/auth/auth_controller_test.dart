@@ -3,6 +3,7 @@ import 'package:timelines/auth/auth_controller.dart';
 import 'package:timelines/auth/auth_repository.dart';
 import 'package:timelines/auth/auth_session.dart';
 import 'package:timelines/auth/local_data_cleaner.dart';
+import 'package:timelines/auth/mock_auth_repository.dart';
 
 class FakeAuthRepository implements AuthRepository {
   FakeAuthRepository({this.initialSession, this.signInSession});
@@ -97,5 +98,16 @@ void main() {
     expect(controller.status, AuthStatus.signedOut);
     expect(controller.session, isNull);
     expect(repository.signedOut, isTrue);
+  });
+
+  test('mock repository sends the stable account ID to cleanup', () async {
+    final RecordingCleaner cleaner = RecordingCleaner();
+    final AuthController controller = AuthController(
+      MockAuthRepository(localDataCleaner: cleaner),
+    );
+    await controller.initialize();
+    await controller.signOut();
+
+    expect(cleaner.clearedAccount, MockAuthRepository.testSession.providerId);
   });
 }

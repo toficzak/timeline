@@ -44,3 +44,23 @@ keystores or private key material.
 The debug OAuth client and signing fingerprints are environment configuration,
 not application source. The real provider flow is verified manually after the
 auth behavior phase is implemented.
+
+## Android verification matrix
+
+| Scenario | Build/configuration | Expected result | Diagnostics |
+| --- | --- | --- | --- |
+| Mock startup | `AUTH_MODE=mock` | Deterministic local session opens; no account picker | `flutter run --dart-define=AUTH_MODE=mock` |
+| Real debug sign-in | Debug APK, Android OAuth client, Web client ID | Google account selection completes and private shell shows the email | `adb logcat` |
+| Account-picker cancellation | Real debug configuration | App remains signed out without an alarming error | `adb logcat` |
+| Missing network or Play services | Real debug configuration | Signed-out state or retryable error is shown; no crash | `adb logcat` |
+| Restart after sign-in | Real debug configuration | Existing Google session is restored before the sign-in screen appears | `adb logcat` |
+| Sign-out | Real debug configuration | Private shell disappears and local cleanup boundary runs | `adb logcat` |
+
+Use mock mode for repeatable local UI checks. Use the real debug configuration
+for OAuth checks; never put the Web client ID, secrets or keystores in source
+control. For the real flow, install the debug APK with:
+
+```bash
+flutter build apk --debug
+adb install -r build/app/outputs/flutter-apk/app-debug.apk
+```
