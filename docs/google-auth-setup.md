@@ -14,6 +14,20 @@ flutter run --dart-define=AUTH_MODE=mock
 Mock mode is intended for local debug work only. It must not be used for a
 release build, and it does not represent a real Google identity.
 
+For the real direct Google Cloud flow, pass the Web application OAuth client ID
+as `serverClientId` through a local Dart define:
+
+```bash
+flutter run \
+  --dart-define=GOOGLE_SERVER_CLIENT_ID=your-web-client-id \
+  --dart-define=AUTH_MODE=google
+```
+
+The Android OAuth client ID is not passed to Dart. Android selects it using the
+application ID and signing certificate fingerprint registered below. The Web
+client ID is an identifier, not a client secret; never commit client secrets,
+keystores or private key material.
+
 ## OAuth registration checklist
 
 1. Create or select the Google project used for the Android app.

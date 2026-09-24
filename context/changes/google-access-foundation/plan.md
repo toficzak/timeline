@@ -432,18 +432,18 @@ stable account ID and honor the clear-on-logout cleanup seam.
 
 #### Automated
 
-- [ ] 2.1 Auth controller tests cover startup loading, restored session, successful sign-in, cancellation, provider failure, retry and sign-out
-- [ ] 2.2 Widget tests verify signed-out sign-in, signed-in private shell and sign-out return
-- [ ] 2.3 `flutter analyze` passes with no unhandled auth state or lint errors
-- [ ] 2.4 `flutter test` passes with the fake repository and cleanup seam
-- [ ] 2.5 Mock-mode startup and sign-in tests do not require Google credentials, network access or Google Play services
+- [x] 2.1 Auth controller tests cover startup loading, restored session, successful sign-in, cancellation, provider failure, retry and sign-out
+- [x] 2.2 Widget tests verify signed-out sign-in, signed-in private shell and sign-out return
+- [x] 2.3 `flutter analyze` passes with no unhandled auth state or lint errors
+- [x] 2.4 `flutter test` passes with the fake repository and cleanup seam
+- [x] 2.5 Mock-mode startup and sign-in tests do not require Google credentials, network access or Google Play services
 
 #### Manual
 
-- [ ] 2.6 A user can complete sign-in, see the signed-in shell and return to it after restart when the provider session is available
-- [ ] 2.7 Cancellation returns quietly and a configured failure shows a clear retry action
-- [ ] 2.8 Sign-out removes the private shell and triggers the local-data cleanup boundary
-- [ ] 2.9 Running the app in documented mock mode reaches the private shell without showing a Google account picker
+- [x] 2.6 A user can complete sign-in, see the signed-in shell and return to it after restart when the provider session is available
+- [x] 2.7 Cancellation returns quietly and a configured failure shows a clear retry action
+- [x] 2.8 Sign-out removes the private shell and triggers the local-data cleanup boundary
+- [x] 2.9 Running the app in documented mock mode reaches the private shell without showing a Google account picker
 
 ### Phase 3: Test and Android verification path
 
