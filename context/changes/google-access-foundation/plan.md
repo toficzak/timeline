@@ -418,15 +418,15 @@ stable account ID and honor the clear-on-logout cleanup seam.
 
 #### Automated
 
-- [ ] 1.1 `flutter pub get` resolves `google_sign_in` and updates `pubspec.lock`
-- [ ] 1.2 `flutter analyze` passes with the renamed package metadata and dependency
-- [ ] 1.3 `flutter build apk --debug` completes with application ID `com.github.toficzak.timelines`
-- [ ] 1.4 A documented debug command can select mock auth without requiring a Google account or network access
+- [x] 1.1 `flutter pub get` resolves `google_sign_in` and updates `pubspec.lock`
+- [x] 1.2 `flutter analyze` passes with the renamed package metadata and dependency
+- [x] 1.3 `flutter build apk --debug` completes with application ID `com.github.toficzak.timelines`
+- [x] 1.4 A documented debug command can select mock auth without requiring a Google account or network access
 
 #### Manual
 
-- [ ] 1.5 The Android launcher and app information identify the app as `Timelines`
-- [ ] 1.6 The OAuth checklist can be followed without exposing a secret or keystore in the repository
+- [x] 1.5 The Android launcher and app information identify the app as `Timelines`
+- [x] 1.6 The OAuth checklist can be followed without exposing a secret or keystore in the repository
 
 ### Phase 2: Session contract and gated app flow
 

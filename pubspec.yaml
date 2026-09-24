@@ -1,14 +1,15 @@
-name: bootstrap_scaffold
-description: "A new Flutter project."
+name: timelines
+description: "A private timeline app."
 publish_to: 'none'
 version: 0.1.0+1
 
 environment:
-  sdk: ^3.13.4
+  sdk: ^3.13.3
 
 dependencies:
   flutter:
     sdk: flutter
+  google_sign_in: ^7.2.0
 
 dev_dependencies:
   flutter_test:
