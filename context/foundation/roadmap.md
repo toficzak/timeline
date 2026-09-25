@@ -40,7 +40,7 @@ Użytkownik chce zauważać zmiany zachodzące w życiu, ale rozproszone zdjęci
 | ID   | Change ID                    | Outcome (user can …)                                      | Prerequisites | PRD refs                         | Status   |
 | ---- | ---------------------------- | --------------------------------------------------------- | ------------- | -------------------------------- | -------- |
 | F-01 | google-access-foundation     | (foundation) użytkownik może rozpocząć prywatną sesję Google | —             | FR-001, Access Control           | done         |
-| F-02 | local-timeline-data-contract | (foundation) aplikacja ma minimalny lokalny kontrakt osi i zdjęć | —             | FR-004, FR-006, NFR              | blocked  |
+| F-02 | local-timeline-data-contract | (foundation) aplikacja ma minimalny lokalny kontrakt osi i zdjęć | —             | FR-004, FR-006, NFR              | planning  |
 | F-03 | android-delivery-path        | (foundation) przepływ można zweryfikować jako aplikację Android | —             | FR-003, NFR, Success Criteria: Guardrails | blocked  |
 | S-01 | signed-in-timeline-list      | zalogowany użytkownik może zobaczyć listę własnych osi czasu | F-01          | US-01, FR-001, FR-002             | proposed |
 | S-02 | open-readable-timeline       | użytkownik może wejść w oś, rozróżnić dni i zobaczyć wpisy oraz przycisk dodania | F-02, S-01    | FR-003, FR-004, FR-005             | blocked  |
@@ -94,7 +94,7 @@ What's already in place in the codebase as of `2026-09-21` (auto-researched + us
 - **Unknowns:**
   - Jakie podejście do lokalnego przechowywania zdjęć i danych zostaje wybrane? — Owner: user. Block: yes.
 - **Risk:** Zła decyzja o lokalnym przechowywaniu może wymusić przebudowę wpisów i zdjęć po rozpoczęciu widoku osi.
-- **Status:** blocked
+- **Status:** planning
 
 ### F-03: Ścieżka dostarczenia Androida
 
