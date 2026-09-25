@@ -395,10 +395,10 @@ decision and migration rather than being inferred from the current local schema.
 
 #### Automated
 
-- [x] 2.1 Repository tests cover timeline and entry CRUD using an in-memory Drift database.
-- [x] 2.2 Repository tests verify optional single-photo behavior, relative path storage, replacement cleanup, deletion cleanup and copy-error cleanup.
-- [x] 2.3 Tests verify missing timeline references are rejected and deleting a timeline leaves no child entries.
-- [x] 2.4 `flutter analyze` passes with the repository and photo-store contracts.
+- [x] 2.1 Repository tests cover timeline and entry CRUD using an in-memory Drift database. — 87b93d4
+- [x] 2.2 Repository tests verify optional single-photo behavior, relative path storage, replacement cleanup, deletion cleanup and copy-error cleanup. — 87b93d4
+- [x] 2.3 Tests verify missing timeline references are rejected and deleting a timeline leaves no child entries. — 87b93d4
+- [x] 2.4 `flutter analyze` passes with the repository and photo-store contracts. — 87b93d4
 
 #### Manual
 
