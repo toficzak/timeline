@@ -7,7 +7,7 @@ import 'mock_auth_repository.dart';
 
 AuthRepository createAuthRepository({LocalDataCleaner? localDataCleaner}) {
   const String mode = String.fromEnvironment('AUTH_MODE');
-  if (!kReleaseMode && mode == 'mock') {
+  if (kDebugMode && mode == 'mock') {
     return MockAuthRepository(localDataCleaner: localDataCleaner);
   }
   return GoogleAuthRepository(localDataCleaner: localDataCleaner);

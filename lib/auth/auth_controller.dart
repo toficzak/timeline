@@ -59,14 +59,12 @@ class AuthController extends ChangeNotifier {
   Future<void> signOut() async {
     if (_operationInFlight) return;
     _operationInFlight = true;
-    final AuthSession? previousSession = _session;
     _session = null;
     _setState(AuthStatus.signedOut);
     try {
       await _repository.signOut();
       _errorMessage = null;
     } catch (error) {
-      _session = previousSession;
       _setError(error);
     } finally {
       _operationInFlight = false;
