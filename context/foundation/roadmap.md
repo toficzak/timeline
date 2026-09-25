@@ -3,7 +3,7 @@ project: timelines
 version: 1
 status: draft
 created: 2026-09-21
-updated: 2026-09-24
+updated: 2026-09-25
 prd_version: 1
 main_goal: speed
 top_blocker: decisions
@@ -184,4 +184,4 @@ What's already in place in the codebase as of `2026-09-21` (auto-researched + us
 
 ## Done
 
-(Empty on first generation. `/10x-archive` appends entries here.)
+- **F-01: (foundation) aplikacja potrafi rozpocząć i zakończyć prywatną sesję użytkownika przez Google.** — Archived 2026-09-25 → `context/archive/2026-09-23-google-access-foundation/`. Lesson: —.
