@@ -456,7 +456,7 @@ stable account ID and honor the clear-on-logout cleanup seam.
 
 #### Manual
 
-- [x] 3.5 Real Google sign-in completes on a configured Google-capable Android device or emulator — 1bcdf56
+- [x] 3.5 Real Google sign-in completes on a configured Google-capable Android device or emulator — verified 2026-09-25
 - [x] 3.6 In mock mode, the app starts with the deterministic test session and does not invoke the Google account picker — 1bcdf56
-- [x] 3.7 Restart, sign-out, cancellation, unavailable services and network failure match the documented outcomes — 1bcdf56
-- [x] 3.8 `adb logcat` shows no unexpected auth crash or token leakage during verification — 1bcdf56
+- [x] 3.7 Restart, sign-out, cancellation, unavailable services and network failure match the documented outcomes — verified 2026-09-25
+- [x] 3.8 `adb logcat` shows no unexpected auth crash or token leakage during verification — verified 2026-09-25
