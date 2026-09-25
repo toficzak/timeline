@@ -1,41 +1,61 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:timelines/timeline/local_photo_store.dart';
+import 'package:timelines/timeline/local_timeline_repository.dart';
+import 'package:timelines/timeline/timeline.dart';
 
 import 'auth/auth_controller.dart';
 import 'auth/auth_factory.dart';
-import 'data/app_database.dart';
+import 'data/app_database.dart' as db;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final AppDatabase database = AppDatabase();
+  final db.AppDatabase database = db.AppDatabase();
   await database.customSelect('SELECT 1').get();
+
+  final LocalPhotoStore photoStore = await LocalPhotoStore.create();
+  final LocalTimelineRepository repository = LocalTimelineRepository(
+    database,
+    photoStore,
+  );
 
   runApp(
     MainApp(
       controller: AuthController(createAuthRepository()),
+      repository: repository,
       database: database,
     ),
   );
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({required this.controller, required this.database, super.key});
+  const MainApp({
+    required this.controller,
+    required this.repository,
+    required this.database,
+    super.key,
+  });
 
   final AuthController controller;
-  final AppDatabase database;
+  final LocalTimelineRepository repository;
+  final db.AppDatabase database;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Timelines',
-      home: AuthGate(controller: controller),
+      home: AuthGate(controller: controller, repository: repository),
     );
   }
 }
 
 class AuthGate extends StatefulWidget {
-  const AuthGate({required this.controller, super.key});
+  const AuthGate({required this.controller, this.repository, super.key});
 
   final AuthController controller;
+  final LocalTimelineRepository? repository;
 
   @override
   State<AuthGate> createState() => _AuthGateState();
@@ -65,6 +85,7 @@ class _AuthGateState extends State<AuthGate> {
         body: Center(child: CircularProgressIndicator()),
       ),
       AuthStatus.signedIn => _PrivateShell(
+        repository: widget.repository,
         sessionEmail: controller.session?.email,
         onSignOut: controller.signOut,
       ),
@@ -100,9 +121,14 @@ class _SignedOutView extends StatelessWidget {
 }
 
 class _PrivateShell extends StatelessWidget {
-  const _PrivateShell({required this.sessionEmail, required this.onSignOut});
+  const _PrivateShell({
+    required this.sessionEmail,
+    this.repository,
+    required this.onSignOut,
+  });
 
   final String? sessionEmail;
+  final LocalTimelineRepository? repository;
   final VoidCallback onSignOut;
 
   @override
@@ -114,11 +140,49 @@ class _PrivateShell extends StatelessWidget {
       ],
     ),
     body: Center(
-      child: Text(
-        sessionEmail == null
-            ? 'Your private timelines'
-            : 'Your private timelines\n$sessionEmail',
-        textAlign: TextAlign.center,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(
+            sessionEmail == null
+                ? 'Your private timelines'
+                : 'Your private timelines\n$sessionEmail',
+            textAlign: TextAlign.center,
+          ),
+          if (repository != null) ...<Widget>[
+            const SizedBox(height: 24),
+            FilledButton(
+              onPressed: () async {
+                final LocalTimelineRepository localRepository = repository!;
+                final Directory supportDirectory =
+                    await getApplicationSupportDirectory();
+                final File source = File(
+                  '${supportDirectory.path}/debug-source.jpg',
+                );
+                await source.writeAsBytes(<int>[1, 2, 3, 4, 5]);
+                final Timeline timeline = await localRepository.createTimeline(
+                  'Debug timeline',
+                );
+                final TimelineEntry entry = await localRepository.createEntry(
+                  timelineId: timeline.id,
+                  description: 'Created from debug build',
+                  photo: source,
+                );
+
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Created entry ${entry.id} with ${entry.photoPath}',
+                      ),
+                    ),
+                  );
+                }
+              },
+              child: const Text('Create debug entry'),
+            ),
+          ],
+        ],
       ),
     ),
   );
