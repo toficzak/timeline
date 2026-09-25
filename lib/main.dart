@@ -2,15 +2,26 @@ import 'package:flutter/material.dart';
 
 import 'auth/auth_controller.dart';
 import 'auth/auth_factory.dart';
+import 'data/app_database.dart';
 
-void main() {
-  runApp(MainApp(controller: AuthController(createAuthRepository())));
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final AppDatabase database = AppDatabase();
+  await database.customSelect('SELECT 1').get();
+
+  runApp(
+    MainApp(
+      controller: AuthController(createAuthRepository()),
+      database: database,
+    ),
+  );
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({required this.controller, super.key});
+  const MainApp({required this.controller, required this.database, super.key});
 
   final AuthController controller;
+  final AppDatabase database;
 
   @override
   Widget build(BuildContext context) {

@@ -382,14 +382,14 @@ decision and migration rather than being inferred from the current local schema.
 
 #### Automated
 
-- [ ] 1.1 `flutter pub get` resolves Drift and generator dependencies.
-- [ ] 1.2 `dart run build_runner build --delete-conflicting-outputs` completes and produces the database companion code.
-- [ ] 1.3 `flutter analyze` passes with the database source and generated code.
-- [ ] 1.4 A schema smoke test opens an in-memory database and verifies the foreign-key relationship and stored creation timestamp.
+- [x] 1.1 `flutter pub get` resolves Drift and generator dependencies.
+- [x] 1.2 `dart run build_runner build --delete-conflicting-outputs` completes and produces the database companion code.
+- [x] 1.3 `flutter analyze` passes with the database source and generated code.
+- [x] 1.4 A schema smoke test opens an in-memory database and verifies the foreign-key relationship and stored creation timestamp.
 
 #### Manual
 
-- [ ] 1.5 A debug Android build launches with the database dependency and creates its database under the app-controlled support/data area without network or storage permissions.
+- [x] 1.5 A debug Android build launches with the database dependency and creates its database under the app-controlled support/data area without network or storage permissions.
 
 ### Phase 2: Timeline repository and photo files
 
