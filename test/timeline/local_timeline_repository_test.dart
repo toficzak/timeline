@@ -156,6 +156,31 @@ void main() {
     expect(await Directory(p.join(root.path, 'entries')).exists(), isFalse);
   });
 
+  test('rejects photo deletion through a symlink outside the root', () async {
+    final Directory root = await Directory(
+      p.join(
+        Directory.systemTemp.path,
+        'timeline-photo-test-${DateTime.now().microsecondsSinceEpoch}',
+      ),
+    ).create();
+    final Directory entries = await Directory(p.join(root.path, 'entries'))
+        .create();
+    final File outside = File(p.join(root.parent.path, 'outside-photo.jpg'));
+    await outside.writeAsString('private');
+    await Link(p.join(entries.path, 'escape.jpg')).create(outside.path);
+    addTearDown(() async {
+      await root.delete(recursive: true);
+      if (await outside.exists()) await outside.delete();
+    });
+    final LocalPhotoStore store = LocalPhotoStore(root);
+
+    expect(
+      () => store.deletePhoto('entries/escape.jpg'),
+      throwsA(isA<InvalidPhotoPathFailure>()),
+    );
+    expect(await outside.exists(), isTrue);
+  });
+
   test('deleting a timeline cascades to child rows', () async {
     final Timeline timeline = await repository.createTimeline('Cascade');
     await repository.createEntry(timelineId: timeline.id, description: 'child');

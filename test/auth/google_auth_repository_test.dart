@@ -5,6 +5,7 @@ import 'package:timelines/auth/google_sign_in_client.dart';
 
 class FakeGoogleSignInClient implements GoogleSignInClient {
   int initializeCalls = 0;
+  Object? initializeError;
   GoogleAccount? restoredAccount;
   GoogleAccount? authenticatedAccount;
   Object? lightweightError;
@@ -13,6 +14,7 @@ class FakeGoogleSignInClient implements GoogleSignInClient {
   @override
   Future<void> initialize({String? serverClientId}) async {
     initializeCalls++;
+    if (initializeError != null) throw initializeError!;
   }
 
   @override
@@ -72,6 +74,20 @@ void main() {
         ),
       ),
     );
+  });
+
+  test('retries provider initialization after a failed attempt', () async {
+    final FakeGoogleSignInClient client = FakeGoogleSignInClient()
+      ..initializeError = const GoogleSignInException(
+        code: GoogleSignInExceptionCode.providerConfigurationError,
+      );
+    final GoogleAuthRepository repository = GoogleAuthRepository(client: client);
+
+    await expectLater(repository.initialize(), throwsA(isA<AuthFailure>()));
+
+    client.initializeError = null;
+    expect(await repository.initialize(), isNull);
+    expect(client.initializeCalls, 2);
   });
 
   test('does not expose provider exception details in failure messages', () async {

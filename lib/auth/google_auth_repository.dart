@@ -35,7 +35,12 @@ class GoogleAuthRepository implements AuthRepository {
       _initialization ??= _client.initialize(
         serverClientId: _serverClientId.isEmpty ? null : _serverClientId,
       );
-      await _initialization;
+      try {
+        await _initialization;
+      } catch (_) {
+        _initialization = null;
+        rethrow;
+      }
       final GoogleAccount? account =
           await _client.attemptLightweightAuthentication(
             reportAllExceptions: true,

@@ -48,6 +48,11 @@ class LocalPhotoStore implements PhotoStore {
   Future<void> deletePhoto(String relativePath) async {
     final File file = File(_absolutePath(relativePath));
     if (await file.exists()) {
+      final String rootPath = await root.resolveSymbolicLinks();
+      final String filePath = await file.resolveSymbolicLinks();
+      if (filePath != rootPath && !p.isWithin(rootPath, filePath)) {
+        throw InvalidPhotoPathFailure(relativePath);
+      }
       await file.delete();
     }
   }

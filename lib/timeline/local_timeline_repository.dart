@@ -127,7 +127,11 @@ class LocalTimelineRepository implements TimelineRepository {
           ));
       durable = true;
       if (existing.photoPath != null && existing.photoPath != newPath) {
-        await photoStore.deletePhoto(existing.photoPath!);
+        try {
+          await photoStore.deletePhoto(existing.photoPath!);
+        } catch (_) {
+          // The database now points to the durable replacement.
+        }
       }
       return updated;
     } catch (_) {
