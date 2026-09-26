@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:timelines/auth/auth_controller.dart';
 import 'package:timelines/auth/auth_repository.dart';
 import 'package:timelines/auth/auth_session.dart';
-import 'package:timelines/auth/local_data_cleaner.dart';
 import 'package:timelines/auth/mock_auth_repository.dart';
 
 class FakeAuthRepository implements AuthRepository {
@@ -28,15 +27,6 @@ class FakeAuthRepository implements AuthRepository {
 
   @override
   Future<void> signOut() async => signedOut = true;
-}
-
-class RecordingCleaner implements LocalDataCleaner {
-  String? clearedAccount;
-
-  @override
-  Future<void> clearForAccount(String providerId) async {
-    clearedAccount = providerId;
-  }
 }
 
 void main() {
@@ -100,14 +90,12 @@ void main() {
     expect(repository.signedOut, isTrue);
   });
 
-  test('mock repository sends the stable account ID to cleanup', () async {
-    final RecordingCleaner cleaner = RecordingCleaner();
-    final AuthController controller = AuthController(
-      MockAuthRepository(localDataCleaner: cleaner),
-    );
+  test('mock repository signs out without account-owned data cleanup', () async {
+    final AuthController controller = AuthController(MockAuthRepository());
     await controller.initialize();
     await controller.signOut();
 
-    expect(cleaner.clearedAccount, MockAuthRepository.testSession.providerId);
+    expect(controller.status, AuthStatus.signedOut);
+    expect(controller.session, isNull);
   });
 }

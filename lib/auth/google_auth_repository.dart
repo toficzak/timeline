@@ -3,7 +3,6 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'auth_repository.dart';
 import 'auth_session.dart';
 import 'google_sign_in_client.dart';
-import 'local_data_cleaner.dart';
 
 enum AuthFailureKind { provider, configuration, unavailable }
 
@@ -20,12 +19,9 @@ class AuthFailure implements Exception {
 class GoogleAuthRepository implements AuthRepository {
   GoogleAuthRepository({
     GoogleSignInClient? client,
-    LocalDataCleaner? localDataCleaner,
-  }) : _client = client ?? PluginGoogleSignInClient(),
-       _localDataCleaner = localDataCleaner ?? const NoopLocalDataCleaner();
+  }) : _client = client ?? PluginGoogleSignInClient();
 
   final GoogleSignInClient _client;
-  final LocalDataCleaner _localDataCleaner;
   Future<void>? _initialization;
   AuthSession? _currentSession;
 
@@ -77,16 +73,12 @@ class GoogleAuthRepository implements AuthRepository {
 
   @override
   Future<void> signOut() async {
-    final String? providerId = _currentSession?.providerId;
     try {
       await _client.signOut();
     } on GoogleSignInException catch (error) {
       throw _mapError(error);
     } finally {
       _currentSession = null;
-      if (providerId != null) {
-        await _localDataCleaner.clearForAccount(providerId);
-      }
     }
   }
 
