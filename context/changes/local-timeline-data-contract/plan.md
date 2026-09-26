@@ -402,19 +402,19 @@ decision and migration rather than being inferred from the current local schema.
 
 #### Manual
 
-- [x] 2.5 A debug repository verification confirms records and a stored photo remain after restarting the app process.
+- [x] 2.5 A debug repository verification confirms records and a stored photo remain after restarting the app process. — 1a0b0bd
 
 ### Phase 3: Integration and verification
 
 #### Automated
 
-- [x] 3.1 Auth integration leaves the device-local database and photo directory intact after sign-out, covered by regression tests.
-- [x] 3.2 `flutter analyze` passes.
-- [x] 3.3 `flutter test` passes with database, repository, photo-store and auth regression tests.
-- [x] 3.4 `dart run build_runner build --delete-conflicting-outputs` is reproducible with no generated drift.
-- [x] 3.5 `flutter build apk --debug` completes with the final Android application ID.
+- [x] 3.1 Auth integration leaves the device-local database and photo directory intact after sign-out, covered by regression tests. — 1a0b0bd
+- [x] 3.2 `flutter analyze` passes. — 1a0b0bd
+- [x] 3.3 `flutter test` passes with database, repository, photo-store and auth regression tests. — 1a0b0bd
+- [x] 3.4 `dart run build_runner build --delete-conflicting-outputs` is reproducible with no generated drift. — 1a0b0bd
+- [x] 3.5 `flutter build apk --debug` completes with the final Android application ID. — 1a0b0bd
 
 #### Manual
 
-- [x] 3.6 Mock-auth sign-out/sign-in confirms the same device-local data remains available.
-- [x] 3.7 Documentation confirms local data loss on uninstall/device replacement and the absence of sync or account ownership.
+- [x] 3.6 Mock-auth sign-out/sign-in confirms the same device-local data remains available. — 1a0b0bd
+- [x] 3.7 Documentation confirms local data loss on uninstall/device replacement and the absence of sync or account ownership. — 1a0b0bd
