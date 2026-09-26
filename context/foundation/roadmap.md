@@ -3,7 +3,7 @@ project: timelines
 version: 1
 status: draft
 created: 2026-09-21
-updated: 2026-09-25
+updated: 2026-09-26
 prd_version: 1
 main_goal: speed
 top_blocker: decisions
@@ -40,7 +40,7 @@ Użytkownik chce zauważać zmiany zachodzące w życiu, ale rozproszone zdjęci
 | ID   | Change ID                    | Outcome (user can …)                                      | Prerequisites | PRD refs                         | Status   |
 | ---- | ---------------------------- | --------------------------------------------------------- | ------------- | -------------------------------- | -------- |
 | F-01 | google-access-foundation     | (foundation) użytkownik może rozpocząć prywatną sesję Google | —             | FR-001, Access Control           | done         |
-| F-02 | local-timeline-data-contract | (foundation) aplikacja ma minimalny lokalny kontrakt osi i zdjęć | —             | FR-004, FR-006, NFR              | in-progress  |
+| F-02 | local-timeline-data-contract | (foundation) aplikacja ma minimalny lokalny kontrakt osi i zdjęć | —             | FR-004, FR-006, NFR              | done         |
 | F-03 | android-delivery-path        | (foundation) przepływ można zweryfikować jako aplikację Android | —             | FR-003, NFR, Success Criteria: Guardrails | blocked  |
 | S-01 | signed-in-timeline-list      | zalogowany użytkownik może zobaczyć listę własnych osi czasu | F-01          | US-01, FR-001, FR-002             | proposed |
 | S-02 | open-readable-timeline       | użytkownik może wejść w oś, rozróżnić dni i zobaczyć wpisy oraz przycisk dodania | F-02, S-01    | FR-003, FR-004, FR-005             | blocked  |
@@ -94,7 +94,7 @@ What's already in place in the codebase as of `2026-09-21` (auto-researched + us
 - **Unknowns:**
   - Jakie podejście do lokalnego przechowywania zdjęć i danych zostaje wybrane? — Owner: user. Block: yes.
 - **Risk:** Zła decyzja o lokalnym przechowywaniu może wymusić przebudowę wpisów i zdjęć po rozpoczęciu widoku osi.
-- **Status:** in-progress
+- **Status:** done
 
 ### F-03: Ścieżka dostarczenia Androida
 
@@ -184,4 +184,5 @@ What's already in place in the codebase as of `2026-09-21` (auto-researched + us
 
 ## Done
 
+- **F-02: (foundation) aplikacja ma minimalny, lokalny sposób przechowywania osi, wpisów, opisów i odwołań do zdjęć potrzebny przez pierwszy przepływ.** — Archived 2026-09-26 → `context/archive/2026-09-25-local-timeline-data-contract/`. Lesson: —.
 - **F-01: (foundation) aplikacja potrafi rozpocząć i zakończyć prywatną sesję użytkownika przez Google.** — Archived 2026-09-25 → `context/archive/2026-09-23-google-access-foundation/`. Lesson: —.

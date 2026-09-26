@@ -1,10 +1,10 @@
 ---
 change_id: local-timeline-data-contract
 title: Local timeline data contract
-status: impl_reviewed
+status: archived
 created: 2026-09-25
 updated: 2026-09-26
-archived_at: null
+archived_at: 2026-09-26T18:06:24Z
 ---
 
 ## Notes
