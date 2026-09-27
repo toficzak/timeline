@@ -5,6 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:timelines/timeline/local_photo_store.dart';
 import 'package:timelines/timeline/local_timeline_repository.dart';
 import 'package:timelines/timeline/timeline.dart';
+import 'package:timelines/timeline/timeline_repository.dart';
 
 import 'auth/auth_controller.dart';
 import 'auth/auth_factory.dart';
@@ -16,7 +17,7 @@ Future<void> main() async {
   await database.customSelect('SELECT 1').get();
 
   final LocalPhotoStore photoStore = await LocalPhotoStore.create();
-  final LocalTimelineRepository repository = LocalTimelineRepository(
+  final TimelineRepository repository = LocalTimelineRepository(
     database,
     photoStore,
   );
@@ -39,7 +40,7 @@ class MainApp extends StatelessWidget {
   });
 
   final AuthController controller;
-  final LocalTimelineRepository repository;
+  final TimelineRepository repository;
   final db.AppDatabase database;
 
   @override
@@ -55,13 +56,15 @@ class AuthGate extends StatefulWidget {
   const AuthGate({required this.controller, this.repository, super.key});
 
   final AuthController controller;
-  final LocalTimelineRepository? repository;
+  final TimelineRepository? repository;
 
   @override
   State<AuthGate> createState() => _AuthGateState();
 }
 
 class _AuthGateState extends State<AuthGate> {
+  bool _isGuest = false;
+
   @override
   void initState() {
     super.initState();
@@ -77,6 +80,15 @@ class _AuthGateState extends State<AuthGate> {
 
   void _onChanged() => setState(() {});
 
+  void _enterGuestMode() => setState(() => _isGuest = true);
+
+  void _leaveGuestMode() => setState(() => _isGuest = false);
+
+  void _signOut() {
+    _isGuest = false;
+    widget.controller.signOut();
+  }
+
   @override
   Widget build(BuildContext context) {
     final AuthController controller = widget.controller;
@@ -87,34 +99,56 @@ class _AuthGateState extends State<AuthGate> {
       AuthStatus.signedIn => _PrivateShell(
         repository: widget.repository,
         sessionEmail: controller.session?.email,
-        onSignOut: controller.signOut,
+        onSignOut: _signOut,
       ),
       AuthStatus.error => _ErrorView(
         message: controller.errorMessage ?? 'Unable to sign in.',
         onRetry: controller.retry,
       ),
-      AuthStatus.signedOut => _SignedOutView(
-        onSignIn: controller.signIn,
-        busy: controller.operationInFlight,
-      ),
+      AuthStatus.signedOut =>
+        _isGuest
+            ? _PrivateShell(
+                repository: widget.repository,
+                onSignOut: _leaveGuestMode,
+              )
+            : _SignedOutView(
+                onSignIn: controller.signIn,
+                onGuestEntry: _enterGuestMode,
+                busy: controller.operationInFlight,
+              ),
     };
   }
 }
 
 class _SignedOutView extends StatelessWidget {
-  const _SignedOutView({required this.onSignIn, required this.busy});
+  const _SignedOutView({
+    required this.onSignIn,
+    required this.onGuestEntry,
+    required this.busy,
+  });
 
   final VoidCallback onSignIn;
+  final VoidCallback onGuestEntry;
   final bool busy;
 
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('Timelines')),
     body: Center(
-      child: FilledButton.icon(
-        onPressed: busy ? null : onSignIn,
-        icon: const Icon(Icons.login),
-        label: const Text('Sign in with Google'),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          FilledButton.icon(
+            onPressed: busy ? null : onSignIn,
+            icon: const Icon(Icons.login),
+            label: const Text('Sign in with Google'),
+          ),
+          const SizedBox(height: 12),
+          OutlinedButton(
+            onPressed: onGuestEntry,
+            child: const Text('Continue as guest'),
+          ),
+        ],
       ),
     ),
   );
@@ -122,13 +156,13 @@ class _SignedOutView extends StatelessWidget {
 
 class _PrivateShell extends StatelessWidget {
   const _PrivateShell({
-    required this.sessionEmail,
+    this.sessionEmail,
     this.repository,
     required this.onSignOut,
   });
 
   final String? sessionEmail;
-  final LocalTimelineRepository? repository;
+  final TimelineRepository? repository;
   final VoidCallback onSignOut;
 
   @override
@@ -153,7 +187,7 @@ class _PrivateShell extends StatelessWidget {
             const SizedBox(height: 24),
             FilledButton(
               onPressed: () async {
-                final LocalTimelineRepository localRepository = repository!;
+                final TimelineRepository localRepository = repository!;
                 final Directory supportDirectory =
                     await getApplicationSupportDirectory();
                 final File source = File(

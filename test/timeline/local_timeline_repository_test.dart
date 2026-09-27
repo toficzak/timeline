@@ -34,6 +34,20 @@ void main() {
     expect(await repository.listTimelines(), isEmpty);
   });
 
+  test('lists timelines in ascending database id order', () async {
+    final Timeline first = await repository.createTimeline('First');
+    final Timeline second = await repository.createTimeline('Second');
+    final Timeline third = await repository.createTimeline('Third');
+
+    await repository.deleteTimeline(second.id);
+    final Timeline fourth = await repository.createTimeline('Fourth');
+
+    expect(
+      (await repository.listTimelines()).map((timeline) => timeline.id),
+      [first.id, third.id, fourth.id],
+    );
+  });
+
   test('performs entry CRUD and keeps entries ordered by creation time', () async {
     final Timeline timeline = await repository.createTimeline('Journal');
     final TimelineEntry first = await repository.createEntry(

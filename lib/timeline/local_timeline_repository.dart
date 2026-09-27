@@ -23,7 +23,9 @@ class LocalTimelineRepository implements TimelineRepository {
 
   @override
   Future<List<Timeline>> listTimelines() async {
-    final List<db.Timeline> rows = await database.select(database.timelines).get();
+    final List<db.Timeline> rows = await (database.select(database.timelines)
+          ..orderBy([(table) => OrderingTerm.asc(table.id)]))
+        .get();
     return rows.map((row) => Timeline(id: row.id, name: row.name)).toList();
   }
 

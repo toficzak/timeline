@@ -42,7 +42,7 @@ Użytkownik chce zauważać zmiany zachodzące w życiu, ale rozproszone zdjęci
 | F-01 | google-access-foundation     | (foundation) użytkownik może rozpocząć prywatną sesję Google | —             | FR-001, Access Control           | done         |
 | F-02 | local-timeline-data-contract | (foundation) aplikacja ma minimalny lokalny kontrakt osi i zdjęć | —             | FR-004, FR-006, NFR              | done         |
 | F-03 | android-delivery-path        | (foundation) przepływ można zweryfikować jako aplikację Android | —             | FR-003, NFR, Success Criteria: Guardrails | blocked  |
-| S-01 | signed-in-timeline-list      | zalogowany użytkownik może zobaczyć listę własnych osi czasu | F-01          | US-01, FR-001, FR-002             | proposed |
+| S-01 | signed-in-timeline-list      | zalogowany użytkownik może zobaczyć listę własnych osi czasu | F-01          | US-01, FR-001, FR-002             | in-progress |
 | S-02 | open-readable-timeline       | użytkownik może wejść w oś, rozróżnić dni i zobaczyć wpisy oraz przycisk dodania | F-02, S-01    | FR-003, FR-004, FR-005             | blocked  |
 | S-03 | local-entry-media-view       | użytkownik może zobaczyć lokalne zdjęcia i opisy wpisów | F-02, S-02    | FR-006                         | blocked  |
 
@@ -123,7 +123,7 @@ What's already in place in the codebase as of `2026-09-21` (auto-researched + us
 - **Unknowns:**
   - Czy lista osi ma używać wyłącznie danych lokalnych w pierwszym przepływie, czy wymagać synchronizacji? — Owner: user. Block: no.
 - **Risk:** Ten wycinek sprawdza dostęp i granicę prywatności przed wejściem w bardziej szczegółowy widok.
-- **Status:** proposed
+- **Status:** in-progress
 
 ### S-02: Czytelny widok osi czasu
 

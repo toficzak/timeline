@@ -9,12 +9,20 @@ class GateFakeRepository implements AuthRepository {
   GateFakeRepository(this.session);
 
   AuthSession? session;
+  int initializeCalls = 0;
+  int signInCalls = 0;
 
   @override
-  Future<AuthSession?> initialize() async => session;
+  Future<AuthSession?> initialize() async {
+    initializeCalls++;
+    return session;
+  }
 
   @override
-  Future<AuthSession?> signIn() async => session;
+  Future<AuthSession?> signIn() async {
+    signInCalls++;
+    return session;
+  }
 
   @override
   Future<void> signOut() async => session = null;
@@ -39,6 +47,20 @@ void main() {
 
     expect(find.text('Sign in with Google'), findsOneWidget);
     expect(find.text('Your private timelines'), findsNothing);
+  });
+
+  testWidgets('guest entry does not invoke authentication', (tester) async {
+    final GateFakeRepository repository = GateFakeRepository(null);
+    final AuthController controller = AuthController(repository);
+    await tester.pumpWidget(appFor(controller));
+    await tester.pump();
+
+    await tester.tap(find.text('Continue as guest'));
+    await tester.pump();
+
+    expect(find.text('Your private timelines'), findsOneWidget);
+    expect(repository.signInCalls, 0);
+    expect(repository.initializeCalls, 1);
   });
 
   testWidgets('signed-in state shows private shell', (tester) async {
