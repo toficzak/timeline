@@ -251,13 +251,13 @@ No schema migration is required. Existing local rows are displayed as-is, and th
 
 #### Automated
 
-- [ ] 2.1 Widget tests cover loading, populated, empty, error with retry, signed-in, and guest presentations using a fake TimelineRepository.
-- [ ] 2.2 Widget tests confirm timeline names render and no navigation/create action is exposed from a list row or empty state.
+- [x] 2.1 Widget tests cover loading, populated, empty, error with retry, signed-in, and guest presentations using a fake TimelineRepository.
+- [x] 2.2 Widget tests confirm timeline names render and no navigation/create action is exposed from a list row or empty state.
 
 #### Manual
 
-- [ ] 2.3 A human can distinguish loading, an empty local store, and a read failure; retry reloads the list without signing out.
-- [ ] 2.4 A populated list is readable in both guest and signed-in modes, and the debug-entry control is no longer shown in this shell.
+- [x] 2.3 A human can distinguish loading, an empty local store, and a read failure; retry reloads the list without signing out.
+- [x] 2.4 A populated list is readable in both guest and signed-in modes, and the debug-entry control is no longer shown in this shell.
 
 ### Phase 3: Integration and regression coverage
 

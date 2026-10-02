@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:timelines/timeline/local_photo_store.dart';
 import 'package:timelines/timeline/local_timeline_repository.dart';
-import 'package:timelines/timeline/timeline.dart';
+import 'package:timelines/timeline/timeline_list_screen.dart';
 import 'package:timelines/timeline/timeline_repository.dart';
 
 import 'auth/auth_controller.dart';
@@ -109,6 +106,7 @@ class _AuthGateState extends State<AuthGate> {
         _isGuest
             ? _PrivateShell(
                 repository: widget.repository,
+                onSignIn: controller.signIn,
                 onSignOut: _leaveGuestMode,
               )
             : _SignedOutView(
@@ -158,11 +156,13 @@ class _PrivateShell extends StatelessWidget {
   const _PrivateShell({
     this.sessionEmail,
     this.repository,
+    this.onSignIn,
     required this.onSignOut,
   });
 
   final String? sessionEmail;
   final TimelineRepository? repository;
+  final VoidCallback? onSignIn;
   final VoidCallback onSignOut;
 
   @override
@@ -170,55 +170,37 @@ class _PrivateShell extends StatelessWidget {
     appBar: AppBar(
       title: const Text('Timelines'),
       actions: <Widget>[
+        if (onSignIn != null)
+          TextButton(
+            onPressed: onSignIn,
+            child: const Text('Sign in with Google'),
+          ),
         IconButton(onPressed: onSignOut, icon: const Icon(Icons.logout)),
       ],
     ),
-    body: Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Text(
-            sessionEmail == null
-                ? 'Your private timelines'
-                : 'Your private timelines\n$sessionEmail',
-            textAlign: TextAlign.center,
-          ),
-          if (repository != null) ...<Widget>[
-            const SizedBox(height: 24),
-            FilledButton(
-              onPressed: () async {
-                final TimelineRepository localRepository = repository!;
-                final Directory supportDirectory =
-                    await getApplicationSupportDirectory();
-                final File source = File(
-                  '${supportDirectory.path}/debug-source.jpg',
-                );
-                await source.writeAsBytes(<int>[1, 2, 3, 4, 5]);
-                final Timeline timeline = await localRepository.createTimeline(
-                  'Debug timeline',
-                );
-                final TimelineEntry entry = await localRepository.createEntry(
-                  timelineId: timeline.id,
-                  description: 'Created from debug build',
-                  photo: source,
-                );
-
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Created entry ${entry.id} with ${entry.photoPath}',
-                      ),
-                    ),
-                  );
-                }
-              },
-              child: const Text('Create debug entry'),
+    body: repository == null
+        ? Center(
+            child: Text(
+              sessionEmail == null
+                  ? 'Your private timelines'
+                  : 'Your private timelines\n$sessionEmail',
+              textAlign: TextAlign.center,
             ),
-          ],
-        ],
-      ),
-    ),
+          )
+        : Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  sessionEmail == null
+                      ? 'Your private timelines'
+                      : 'Your private timelines\n$sessionEmail',
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Expanded(child: TimelineListScreen(repository: repository!)),
+            ],
+          ),
   );
 }
 
