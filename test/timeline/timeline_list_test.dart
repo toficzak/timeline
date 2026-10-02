@@ -155,6 +155,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(repository.listCalls, 2);
+    expect(
+      find.text('Unable to load timelines. Please try again.'),
+      findsNothing,
+    );
     expect(find.text('Recovered'), findsOneWidget);
   });
 

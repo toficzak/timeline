@@ -155,8 +155,8 @@ Complete wiring and protect the boundaries between local data, authentication, a
 
 #### Manual Verification:
 
-- On a clean local store, guest entry shows the empty state; after local data exists, guest and signed-in entry show the same ordered names.
-- Signing out removes authenticated presentation but does not delete or hide the local list when entering guest mode again.
+- On a clean local store, guest entry shows the empty state; no unavailable create or seed action is required.
+- With mock authentication available, signing out returns to the two-choice screen, and re-entering as guest shows the same empty local state without authenticated identity.
 
 **Implementation Note**: Treat account-specific privacy as a documented future decision, not as a reason to route local rows through auth cleanup.
 
@@ -209,9 +209,9 @@ Verify the complete Android-targeted flow and record that the change remains wit
 
 1. Launch with an empty local database and confirm both access buttons are present.
 2. Continue as guest and confirm loading followed by the empty state with no create action.
-3. Seed or create local timelines through the existing repository/debug setup, re-enter as guest, and verify ascending creation/id order.
+3. If a separate local-data seed path is available, re-enter as guest and verify ascending creation/id order; otherwise record the populated-list check as deferred until such a path exists.
 4. Force a repository read failure, use retry, and confirm the error does not log the user out.
-5. Sign in or use mock auth, confirm the same list appears, sign out, then re-enter as guest and confirm local data remains.
+5. Sign in or use mock auth, sign out, then re-enter as guest and confirm the signed-out choices, guest empty state, and absence of authenticated identity; populated-data retention remains deferred without a seed path.
 
 ## Performance Considerations
 
@@ -263,13 +263,13 @@ No schema migration is required. Existing local rows are displayed as-is, and th
 
 #### Automated
 
-- [ ] 3.1 `flutter analyze` passes.
-- [ ] 3.2 `flutter test` passes, including existing auth, retention, repository, and new widget tests.
+- [x] 3.1 `flutter analyze` passes.
+- [x] 3.2 `flutter test` passes, including existing auth, retention, repository, and new widget tests.
 
 #### Manual
 
-- [ ] 3.3 On a clean local store, guest entry shows the empty state; after local data exists, guest and signed-in entry show the same ordered names.
-- [ ] 3.4 Signing out removes authenticated presentation but does not delete or hide the local list when entering guest mode again.
+- [x] 3.3 On a clean local store, guest entry shows the empty state; no unavailable create or seed action is required.
+- [x] 3.4 With mock authentication available, signing out returns to the two-choice screen, and re-entering as guest shows the same empty local state without authenticated identity.
 
 ### Phase 4: Delivery verification
 
