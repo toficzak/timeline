@@ -263,13 +263,13 @@ No schema migration is required. Existing local rows are displayed as-is, and th
 
 #### Automated
 
-- [x] 3.1 `flutter analyze` passes.
-- [x] 3.2 `flutter test` passes, including existing auth, retention, repository, and new widget tests.
+- [x] 3.1 `flutter analyze` passes. — d00e8e4
+- [x] 3.2 `flutter test` passes, including existing auth, retention, repository, and new widget tests. — d00e8e4
 
 #### Manual
 
-- [x] 3.3 On a clean local store, guest entry shows the empty state; no unavailable create or seed action is required.
-- [x] 3.4 With mock authentication available, signing out returns to the two-choice screen, and re-entering as guest shows the same empty local state without authenticated identity.
+- [x] 3.3 On a clean local store, guest entry shows the empty state; no unavailable create or seed action is required. — d00e8e4
+- [x] 3.4 With mock authentication available, signing out returns to the two-choice screen, and re-entering as guest shows the same empty local state without authenticated identity. — d00e8e4
 
 ### Phase 4: Delivery verification
 
