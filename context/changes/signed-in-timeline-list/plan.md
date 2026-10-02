@@ -245,7 +245,7 @@ No schema migration is required. Existing local rows are displayed as-is, and th
 
 #### Manual
 
-- [ ] 1.3 The signed-out screen visibly offers both Google sign-in and guest entry, and choosing guest does not invoke the auth repository.
+- [x] 1.3 The signed-out screen visibly offers both Google sign-in and guest entry, and choosing guest does not invoke the auth repository.
 
 ### Phase 2: Timeline list screen
 
@@ -275,9 +275,9 @@ No schema migration is required. Existing local rows are displayed as-is, and th
 
 #### Automated
 
-- [ ] 4.1 `flutter build apk --debug` completes successfully.
-- [ ] 4.2 Generated files and static analysis remain clean after the final implementation.
+- [x] 4.1 `flutter build apk --debug` completes successfully.
+- [x] 4.2 Generated files and static analysis remain clean after the final implementation.
 
 #### Manual
 
-- [ ] 4.3 On a target Android device or emulator, the user can choose guest entry, see local timelines, sign in when configured, sign out, and re-enter as guest without losing local records.
+- [x] 4.3 On a target Android device or emulator, the user can choose guest entry, see local timelines, sign in when configured, sign out, and re-enter as guest without losing local records.
