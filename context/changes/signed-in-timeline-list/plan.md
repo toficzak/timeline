@@ -256,8 +256,8 @@ No schema migration is required. Existing local rows are displayed as-is, and th
 
 #### Manual
 
-- [x] 2.3 A human can distinguish loading, an empty local store, and a read failure; retry reloads the list without signing out.
-- [x] 2.4 A populated list is readable in both guest and signed-in modes, and the debug-entry control is no longer shown in this shell.
+- [x] 2.3 A human can distinguish loading, an empty local store, and a read failure; retry reloads the list without signing out. — 6921eb1
+- [x] 2.4 A populated list is readable in both guest and signed-in modes, and the debug-entry control is no longer shown in this shell. — 6921eb1
 
 ### Phase 3: Integration and regression coverage
 
