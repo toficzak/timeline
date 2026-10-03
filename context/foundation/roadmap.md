@@ -3,7 +3,7 @@ project: timelines
 version: 1
 status: draft
 created: 2026-09-21
-updated: 2026-09-26
+updated: 2026-10-02
 prd_version: 1
 main_goal: speed
 top_blocker: decisions
@@ -43,8 +43,9 @@ Użytkownik chce zauważać zmiany zachodzące w życiu, ale rozproszone zdjęci
 | F-02 | local-timeline-data-contract | (foundation) aplikacja ma minimalny lokalny kontrakt osi i zdjęć | —             | FR-004, FR-006, NFR              | done         |
 | F-03 | android-delivery-path        | (foundation) przepływ można zweryfikować jako aplikację Android | —             | FR-003, NFR, Success Criteria: Guardrails | blocked  |
 | S-01 | signed-in-timeline-list      | zalogowany użytkownik może zobaczyć listę własnych osi czasu | F-01          | US-01, FR-001, FR-002             | in-progress |
-| S-02 | open-readable-timeline       | użytkownik może wejść w oś, rozróżnić dni i zobaczyć wpisy oraz przycisk dodania | F-02, S-01    | FR-003, FR-004, FR-005             | blocked  |
+| S-02 | open-readable-timeline       | użytkownik może wejść w oś, rozróżnić dni i zobaczyć wpisy oraz przycisk dodania | F-02, S-01    | FR-003, FR-004, FR-005             | planning |
 | S-03 | local-entry-media-view       | użytkownik może zobaczyć lokalne zdjęcia i opisy wpisów | F-02, S-02    | FR-006                         | blocked  |
+| S-04 | timeline-crud                | użytkownik może tworzyć, zmieniać nazwę i usuwać własne lokalne osie czasu | S-01, F-02 | MVP notes: CRUD osi czasu | in-progress |
 
 ## Streams
 
@@ -137,7 +138,7 @@ What's already in place in the codebase as of `2026-09-21` (auto-researched + us
   - Która aktywność ma być pierwszym konkretnym scenariuszem poza ogólnym przepływem osi czasu? — Owner: user. Block: no.
   - Czy oczekiwania dostarczenia Androida pozwalają na obecny zakres lokalny? — Owner: user. Block: yes.
 - **Risk:** To gwiazda przewodnia kamienia milowego; jej odłożenie opóźnia najważniejszą informację, czy podstawowy dziennik jest użyteczny.
-- **Status:** blocked
+- **Status:** planning
 
 ### S-03: Lokalne zdjęcia i opisy wpisów
 
@@ -152,6 +153,18 @@ What's already in place in the codebase as of `2026-09-21` (auto-researched + us
   - Jak należy zabezpieczyć klucz potrzebny do późniejszej analizy AI? — Owner: user. Block: no.
 - **Risk:** Ten wycinek domyka wartość dokumentowania, ale powinien pozostać za widokiem osi, aby nie budować obsługi mediów bez działającej nawigacji.
 - **Status:** blocked
+
+### S-04: CRUD osi czasu
+
+- **Outcome:** użytkownik może utworzyć, zmienić nazwę i usunąć lokalną oś czasu.
+- **Change ID:** timeline-crud
+- **PRD refs:** MVP notes: CRUD osi czasu, FR-002
+- **Prerequisites:** F-02, S-01
+- **Parallel with:** S-02, S-03
+- **Blockers:** —
+- **Unknowns:** —
+- **Risk:** usunięcie osi kaskadowo usuwa jej wpisy, dlatego akcja wymaga potwierdzenia.
+- **Status:** in-progress
 
 ## Backlog Handoff
 
