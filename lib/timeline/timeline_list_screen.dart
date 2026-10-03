@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'timeline.dart';
+import 'timeline_entries_screen.dart';
 import 'timeline_name_dialog.dart';
 import 'timeline_repository.dart';
 
@@ -163,6 +164,16 @@ class _TimelineListScreenState extends State<TimelineListScreen> {
                 final Timeline timeline = timelines[index];
                 return ListTile(
                   title: Text(timeline.name),
+                  onTap: () {
+                    Navigator.of(context).push<void>(
+                      MaterialPageRoute<void>(
+                        builder: (context) => TimelineEntriesScreen(
+                          timeline: timeline,
+                          repository: widget.repository,
+                        ),
+                      ),
+                    );
+                  },
                   trailing: PopupMenuButton<_TimelineAction>(
                     enabled: !_deletePending,
                     tooltip: 'Actions for ${timeline.name}',

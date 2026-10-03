@@ -8,6 +8,7 @@ import 'package:timelines/auth/auth_repository.dart';
 import 'package:timelines/auth/auth_session.dart';
 import 'package:timelines/main.dart';
 import 'package:timelines/timeline/timeline.dart';
+import 'package:timelines/timeline/timeline_entries_screen.dart';
 import 'package:timelines/timeline/timeline_list_screen.dart';
 import 'package:timelines/timeline/timeline_repository.dart';
 
@@ -17,14 +18,18 @@ class FakeTimelineRepository implements TimelineRepository {
     List<Future<Timeline>>? createResponses,
     List<Future<Timeline>>? updateResponses,
     List<Future<void>>? deleteResponses,
+    List<Future<List<TimelineEntry>>>? entriesResponses,
   }) : createResponses = createResponses ?? <Future<Timeline>>[],
        updateResponses = updateResponses ?? <Future<Timeline>>[],
-       deleteResponses = deleteResponses ?? <Future<void>>[];
+       deleteResponses = deleteResponses ?? <Future<void>>[],
+       entriesResponses = entriesResponses ?? <Future<List<TimelineEntry>>>[];
 
   final List<Future<List<Timeline>>> responses;
   final List<Future<Timeline>> createResponses;
   final List<Future<Timeline>> updateResponses;
   final List<Future<void>> deleteResponses;
+  final List<Future<List<TimelineEntry>>> entriesResponses;
+  final List<int> requestedTimelineIds = <int>[];
   int listCalls = 0;
   final List<String> createdNames = <String>[];
   final List<Timeline> updatedTimelines = <Timeline>[];
@@ -55,15 +60,18 @@ class FakeTimelineRepository implements TimelineRepository {
   }
 
   @override
+  Future<List<TimelineEntry>> listEntries(int timelineId) {
+    requestedTimelineIds.add(timelineId);
+    if (entriesResponses.isNotEmpty) return entriesResponses.removeAt(0);
+    return Future<List<TimelineEntry>>.value(const <TimelineEntry>[]);
+  }
+
+  @override
   Future<TimelineEntry> createEntry({
     required int timelineId,
     required String description,
     File? photo,
   }) => throw UnimplementedError();
-
-  @override
-  Future<List<TimelineEntry>> listEntries(int timelineId) =>
-      throw UnimplementedError();
 
   @override
   Future<TimelineEntry> updateEntry(
@@ -281,6 +289,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Edit'), findsOneWidget);
     expect(find.text('Delete'), findsOneWidget);
+    expect(find.byType(TimelineEntriesScreen), findsNothing);
     await tester.tap(find.text('Delete'));
     await tester.pumpAndSettle();
 
@@ -308,6 +317,32 @@ void main() {
     expect(repository.listCalls, 2);
     expect(find.text('First'), findsNothing);
     expect(find.text('Second'), findsOneWidget);
+  });
+
+  testWidgets('opens the selected timeline entries screen from a row tap', (
+    tester,
+  ) async {
+    final FakeTimelineRepository repository = FakeTimelineRepository(
+      <Future<List<Timeline>>>[
+        Future<List<Timeline>>.value(const <Timeline>[
+          Timeline(id: 2, name: 'Second'),
+          Timeline(id: 1, name: 'First'),
+        ]),
+      ],
+      entriesResponses: <Future<List<TimelineEntry>>>[
+        Future<List<TimelineEntry>>.value(const <TimelineEntry>[]),
+      ],
+    );
+    await tester.pumpWidget(listApp(repository));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Second'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(TimelineEntriesScreen), findsOneWidget);
+    expect(find.text('Second'), findsOneWidget);
+    expect(find.text('No entries yet.'), findsOneWidget);
+    expect(repository.requestedTimelineIds, <int>[2]);
   });
 
   testWidgets('disables delete controls while deletion is pending', (

@@ -267,25 +267,25 @@ No schema migration is required. Existing entries are read through the current
 
 #### Automated
 
-- [x] 1.1 Widget tests cover loading, empty, populated, error, retry, back navigation, and the exact timeline id passed to `listEntries`.
-- [x] 1.2 Widget tests prove the empty state has no add-entry action.
+- [x] 1.1 Widget tests cover loading, empty, populated, error, retry, back navigation, and the exact timeline id passed to `listEntries`. — 713cd0a
+- [x] 1.2 Widget tests prove the empty state has no add-entry action. — 713cd0a
 
 #### Manual
 
-- [ ] 1.3 Opening a timeline shows its title, a loading state, then an empty message when the selected timeline has no entries.
-- [ ] 1.4 A read failure remains on the entries screen and can be retried.
+- [x] 1.3 Opening a timeline shows its title, a loading state, then an empty message when the selected timeline has no entries.
+- [x] 1.4 A read failure remains on the entries screen and can be retried.
 
 ### Phase 2: Timeline-row navigation
 
 #### Automated
 
-- [ ] 2.1 Widget tests prove tapping a timeline opens the entries screen with the correct timeline identity.
-- [ ] 2.2 Existing timeline create, edit, delete, empty-list, loading, retry, guest, and signed-in tests remain passing.
+- [x] 2.1 Widget tests prove tapping a timeline opens the entries screen with the correct timeline identity.
+- [x] 2.2 Existing timeline create, edit, delete, empty-list, loading, retry, guest, and signed-in tests remain passing.
 
 #### Manual
 
-- [ ] 2.3 A user can tap a timeline row, see its entries screen, and return with the back affordance to the same timeline list.
-- [ ] 2.4 Opening the row menu still permits Edit and Delete without accidental navigation.
+- [x] 2.3 A user can tap a timeline row, see its entries screen, and return with the back affordance to the same timeline list.
+- [x] 2.4 Opening the row menu still permits Edit and Delete without accidental navigation.
 
 ### Phase 3: Integration and regression verification
 
