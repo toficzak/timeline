@@ -34,6 +34,78 @@ void main() {
     expect(await repository.listTimelines(), isEmpty);
   });
 
+  test('trims timeline names when creating and updating', () async {
+    final Timeline created = await repository.createTimeline('  Weekend  ');
+    expect(created.name, 'Weekend');
+
+    final Timeline updated = await repository.updateTimeline(
+      created.copyWith(name: '\tWeekends\n'),
+    );
+    expect(updated.name, 'Weekends');
+    expect((await repository.listTimelines()).single.name, 'Weekends');
+  });
+
+  test('rejects blank and whitespace-only timeline names without rows', () async {
+    expect(
+      () => repository.createTimeline(''),
+      throwsA(isA<InvalidTimelineNameFailure>()),
+    );
+    expect(
+      () => repository.createTimeline(' \t\n '),
+      throwsA(isA<InvalidTimelineNameFailure>()),
+    );
+
+    final Timeline timeline = await repository.createTimeline('Valid');
+    expect(
+      () => repository.updateTimeline(timeline.copyWith(name: '  ')),
+      throwsA(isA<InvalidTimelineNameFailure>()),
+    );
+    expect(await repository.listTimelines(), [timeline]);
+  });
+
+  test('accepts duplicate normalized timeline names', () async {
+    final Timeline first = await repository.createTimeline('Weekend');
+    final Timeline second = await repository.createTimeline('  Weekend  ');
+
+    expect(second.name, first.name);
+    expect(await repository.listTimelines(), [first, second]);
+  });
+
+  test('rejects updates and deletes for missing timelines', () async {
+    expect(
+      () => repository.updateTimeline(const Timeline(id: 99, name: 'Missing')),
+      throwsA(isA<TimelineNotFoundFailure>()),
+    );
+    expect(
+      () => repository.deleteTimeline(99),
+      throwsA(isA<TimelineNotFoundFailure>()),
+    );
+  });
+
+  test('timeline CRUD does not alter another timeline or its entries', () async {
+    final Timeline first = await repository.createTimeline('First');
+    final Timeline second = await repository.createTimeline('Second');
+    final TimelineEntry secondEntry = await repository.createEntry(
+      timelineId: second.id,
+      description: 'keep me',
+    );
+
+    final Timeline renamed = await repository.updateTimeline(
+      first.copyWith(name: '  Renamed  '),
+    );
+    await repository.deleteTimeline(first.id);
+
+    expect(renamed.name, 'Renamed');
+    expect(await repository.listTimelines(), [second]);
+    final List<TimelineEntry> remainingEntries = await repository.listEntries(
+      second.id,
+    );
+    expect(remainingEntries, hasLength(1));
+    expect(remainingEntries.single.id, secondEntry.id);
+    expect(remainingEntries.single.timelineId, secondEntry.timelineId);
+    expect(remainingEntries.single.description, secondEntry.description);
+  });
+
   test('lists timelines in ascending database id order', () async {
     final Timeline first = await repository.createTimeline('First');
     final Timeline second = await repository.createTimeline('Second');

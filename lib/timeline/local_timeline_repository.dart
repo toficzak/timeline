@@ -15,10 +15,11 @@ class LocalTimelineRepository implements TimelineRepository {
 
   @override
   Future<Timeline> createTimeline(String name) async {
+    final String normalizedName = _normalizeTimelineName(name);
     final int id = await database.into(database.timelines).insert(
-      db.TimelinesCompanion.insert(name: name),
+      db.TimelinesCompanion.insert(name: normalizedName),
     );
-    return Timeline(id: id, name: name);
+    return Timeline(id: id, name: normalizedName);
   }
 
   @override
@@ -31,11 +32,12 @@ class LocalTimelineRepository implements TimelineRepository {
 
   @override
   Future<Timeline> updateTimeline(Timeline timeline) async {
+    final String normalizedName = _normalizeTimelineName(timeline.name);
     final int count = await (database.update(database.timelines)
           ..where((table) => table.id.equals(timeline.id)))
-        .write(db.TimelinesCompanion(name: Value(timeline.name)));
+        .write(db.TimelinesCompanion(name: Value(normalizedName)));
     if (count == 0) throw TimelineNotFoundFailure(timeline.id);
-    return timeline;
+    return Timeline(id: timeline.id, name: normalizedName);
   }
 
   @override
@@ -163,6 +165,12 @@ class LocalTimelineRepository implements TimelineRepository {
           ..where((table) => table.id.equals(id)))
         .getSingleOrNull();
     if (timeline == null) throw TimelineNotFoundFailure(id);
+  }
+
+  String _normalizeTimelineName(String name) {
+    final String normalizedName = name.trim();
+    if (normalizedName.isEmpty) throw const InvalidTimelineNameFailure();
+    return normalizedName;
   }
 
   TimelineEntry _entry(db.Entry row) => TimelineEntry(

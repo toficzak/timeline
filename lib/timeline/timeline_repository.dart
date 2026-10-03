@@ -36,6 +36,10 @@ class TimelineNotFoundFailure extends TimelineRepositoryFailure {
       : super('Timeline $timelineId does not exist.');
 }
 
+class InvalidTimelineNameFailure extends TimelineRepositoryFailure {
+  const InvalidTimelineNameFailure() : super('Timeline name cannot be empty.');
+}
+
 class EntryNotFoundFailure extends TimelineRepositoryFailure {
   const EntryNotFoundFailure(int entryId)
       : super('Entry $entryId does not exist in the requested timeline.');
