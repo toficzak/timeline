@@ -303,11 +303,11 @@ No schema migration is required. Existing timeline names remain valid unless the
 
 #### Automated
 
-- [x] 4.1 `flutter analyze` passes.
-- [x] 4.2 `flutter test` passes, including repository, list widget, auth, retention, and database tests.
-- [x] 4.3 `flutter build apk --debug` completes successfully.
+- [x] 4.1 `flutter analyze` passes. — d156704
+- [x] 4.2 `flutter test` passes, including repository, list widget, auth, retention, and database tests. — d156704
+- [x] 4.3 `flutter build apk --debug` completes successfully. — d156704
 
 #### Manual
 
-- [x] 4.4 On Android or an emulator, guest mode can create, rename, and delete a local timeline, including canceling a delete.
-- [x] 4.5 The same local CRUD flow is available after mock or configured Google sign-in; signing out preserves local timelines for guest re-entry.
+- [x] 4.4 On Android or an emulator, guest mode can create, rename, and delete a local timeline, including canceling a delete. — d156704
+- [x] 4.5 The same local CRUD flow is available after mock or configured Google sign-in; signing out preserves local timelines for guest re-entry. — d156704
