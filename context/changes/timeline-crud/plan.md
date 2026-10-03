@@ -268,24 +268,24 @@ No schema migration is required. Existing timeline names remain valid unless the
 
 #### Automated
 
-- [x] 1.1 Repository tests prove trimming, required-name rejection, duplicate-name acceptance, and missing-timeline failures.
-- [x] 1.2 Existing entry, photo cleanup, cascade, auth, and local-retention tests continue to pass.
+- [x] 1.1 Repository tests prove trimming, required-name rejection, duplicate-name acceptance, and missing-timeline failures. — bb0260a
+- [x] 1.2 Existing entry, photo cleanup, cascade, auth, and local-retention tests continue to pass. — bb0260a
 
 #### Manual
 
-- [x] 1.3 No manual verification is requested for this phase; the repository contract is fully executable through automated tests.
+- [x] 1.3 No manual verification is requested for this phase; the repository contract is fully executable through automated tests. — bb0260a
 
 ### Phase 2: Create and edit form
 
 #### Automated
 
-- [ ] 2.1 Widget tests cover create and edit dialogs, validation, cancellation, pending state, operation errors, and successful list refresh.
-- [ ] 2.2 Existing loading, empty, populated, retry, signed-in, and guest list tests remain passing.
+- [x] 2.1 Widget tests cover create and edit dialogs, validation, cancellation, pending state, operation errors, and successful list refresh.
+- [x] 2.2 Existing loading, empty, populated, retry, signed-in, and guest list tests remain passing.
 
 #### Manual
 
-- [ ] 2.3 A human can create a timeline from both an empty and populated list, rename it, cancel either form, and see the result without leaving the list.
-- [ ] 2.4 A failed save keeps the form open and retains the typed name rather than silently discarding it.
+- [x] 2.3 A human can create a timeline from both an empty and populated list, rename it, cancel either form, and see the result without leaving the list.
+- [x] 2.4 A failed save keeps the form open and retains the typed name rather than silently discarding it.
 
 ### Phase 3: Row actions and confirmed deletion
 

@@ -12,20 +12,36 @@ import 'package:timelines/timeline/timeline_list_screen.dart';
 import 'package:timelines/timeline/timeline_repository.dart';
 
 class FakeTimelineRepository implements TimelineRepository {
-  FakeTimelineRepository(this.responses);
+  FakeTimelineRepository(
+    this.responses, {
+    List<Future<Timeline>>? createResponses,
+    List<Future<Timeline>>? updateResponses,
+  }) : createResponses = createResponses ?? <Future<Timeline>>[],
+       updateResponses = updateResponses ?? <Future<Timeline>>[];
 
   final List<Future<List<Timeline>>> responses;
+  final List<Future<Timeline>> createResponses;
+  final List<Future<Timeline>> updateResponses;
   int listCalls = 0;
+  final List<String> createdNames = <String>[];
+  final List<Timeline> updatedTimelines = <Timeline>[];
 
   @override
   Future<List<Timeline>> listTimelines() => responses[listCalls++];
 
   @override
-  Future<Timeline> createTimeline(String name) => throw UnimplementedError();
+  Future<Timeline> createTimeline(String name) {
+    createdNames.add(name);
+    if (createResponses.isNotEmpty) return createResponses.removeAt(0);
+    return Future<Timeline>.value(Timeline(id: 100, name: name));
+  }
 
   @override
-  Future<Timeline> updateTimeline(Timeline timeline) =>
-      throw UnimplementedError();
+  Future<Timeline> updateTimeline(Timeline timeline) {
+    updatedTimelines.add(timeline);
+    if (updateResponses.isNotEmpty) return updateResponses.removeAt(0);
+    return Future<Timeline>.value(timeline);
+  }
 
   @override
   Future<void> deleteTimeline(int timelineId) => throw UnimplementedError();
@@ -95,7 +111,7 @@ void main() {
       tester.widgetList<Text>(find.byType(Text)).map((text) => text.data),
       containsAllInOrder(<String?>['First', 'Later']),
     );
-    expect(find.text('Create'), findsNothing);
+    expect(find.text('Create'), findsOneWidget);
   });
 
   testWidgets('shows an explicit loading state during a slow read', (
@@ -120,7 +136,7 @@ void main() {
     expect(find.text('Loaded'), findsOneWidget);
   });
 
-  testWidgets('shows an empty message without a create action', (tester) async {
+  testWidgets('shows an empty message with a create action', (tester) async {
     final FakeTimelineRepository repository = FakeTimelineRepository(
       <Future<List<Timeline>>>[
         Future<List<Timeline>>.value(const <Timeline>[]),
@@ -130,7 +146,106 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('No timelines yet.'), findsOneWidget);
-    expect(find.byType(FilledButton), findsNothing);
+    expect(find.text('Create'), findsOneWidget);
+  });
+
+  testWidgets('creates a timeline and refreshes the list', (tester) async {
+    final FakeTimelineRepository repository = FakeTimelineRepository(
+      <Future<List<Timeline>>>[
+        Future<List<Timeline>>.value(const <Timeline>[]),
+        Future<List<Timeline>>.value(const <Timeline>[
+          Timeline(id: 1, name: 'New name'),
+        ]),
+      ],
+    );
+    await tester.pumpWidget(listApp(repository));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Create'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), '  New name  ');
+    await tester.tap(find.text('Create').last);
+    await tester.pumpAndSettle();
+
+    expect(repository.createdNames, <String>['New name']);
+    expect(repository.listCalls, 2);
+    expect(find.text('New name'), findsOneWidget);
+  });
+
+  testWidgets('validates blank names inline and supports cancellation', (
+    tester,
+  ) async {
+    final FakeTimelineRepository repository = FakeTimelineRepository(
+      <Future<List<Timeline>>>[
+        Future<List<Timeline>>.value(const <Timeline>[]),
+      ],
+    );
+    await tester.pumpWidget(listApp(repository));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Create'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Create').last);
+    await tester.pump();
+
+    expect(find.text('Timeline name cannot be empty.'), findsOneWidget);
+    expect(repository.createdNames, isEmpty);
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    expect(find.text('No timelines yet.'), findsOneWidget);
+  });
+
+  testWidgets('edits a timeline and preserves input after an operation error', (
+    tester,
+  ) async {
+    final Completer<Timeline> updateFailure = Completer<Timeline>();
+    final FakeTimelineRepository repository = FakeTimelineRepository(
+      <Future<List<Timeline>>>[
+        Future<List<Timeline>>.value(const <Timeline>[
+          Timeline(id: 1, name: 'Old name'),
+        ]),
+      ],
+      updateResponses: <Future<Timeline>>[updateFailure.future],
+    );
+    await tester.pumpWidget(listApp(repository));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Edit Old name'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'Renamed');
+    await tester.tap(find.text('Save'));
+    updateFailure.completeError(const InvalidTimelineNameFailure());
+    await tester.pumpAndSettle();
+
+    expect(find.text('Timeline name cannot be empty.'), findsOneWidget);
+    expect(find.text('Renamed'), findsOneWidget);
+    expect(find.text('Edit timeline'), findsOneWidget);
+  });
+
+  testWidgets('disables form controls while save is pending', (tester) async {
+    final Completer<Timeline> save = Completer<Timeline>();
+    final FakeTimelineRepository repository = FakeTimelineRepository(
+      <Future<List<Timeline>>>[
+        Future<List<Timeline>>.value(const <Timeline>[]),
+        Future<List<Timeline>>.value(const <Timeline>[]),
+      ],
+      createResponses: <Future<Timeline>>[save.future],
+    );
+    await tester.pumpWidget(listApp(repository));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Create'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'Pending');
+    await tester.tap(find.text('Create').last);
+    await tester.pump();
+
+    expect(
+      tester.widget<TextButton>(find.widgetWithText(TextButton, 'Cancel')).onPressed,
+      isNull,
+    );
+    expect(
+      tester.widget<FilledButton>(find.byType(FilledButton).last).onPressed,
+      isNull,
+    );
+    save.complete(const Timeline(id: 1, name: 'Pending'));
+    await tester.pumpAndSettle();
   });
 
   testWidgets('shows an error and retries the read', (tester) async {
@@ -184,7 +299,10 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Your private timelines\nperson@example.com'), findsOneWidget);
+    expect(
+      find.text('Your private timelines\nperson@example.com'),
+      findsOneWidget,
+    );
     expect(find.text('Private'), findsOneWidget);
     expect(find.text('Sign in with Google'), findsNothing);
     expect(find.text('Create debug entry'), findsNothing);
