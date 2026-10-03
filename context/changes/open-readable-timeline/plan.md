@@ -272,30 +272,30 @@ No schema migration is required. Existing entries are read through the current
 
 #### Manual
 
-- [x] 1.3 Opening a timeline shows its title, a loading state, then an empty message when the selected timeline has no entries.
-- [x] 1.4 A read failure remains on the entries screen and can be retried.
+- [x] 1.3 Opening a timeline shows its title, a loading state, then an empty message when the selected timeline has no entries. — fcea0c6
+- [x] 1.4 A read failure remains on the entries screen and can be retried. — fcea0c6
 
 ### Phase 2: Timeline-row navigation
 
 #### Automated
 
-- [x] 2.1 Widget tests prove tapping a timeline opens the entries screen with the correct timeline identity.
-- [x] 2.2 Existing timeline create, edit, delete, empty-list, loading, retry, guest, and signed-in tests remain passing.
+- [x] 2.1 Widget tests prove tapping a timeline opens the entries screen with the correct timeline identity. — fcea0c6
+- [x] 2.2 Existing timeline create, edit, delete, empty-list, loading, retry, guest, and signed-in tests remain passing. — fcea0c6
 
 #### Manual
 
-- [x] 2.3 A user can tap a timeline row, see its entries screen, and return with the back affordance to the same timeline list.
-- [x] 2.4 Opening the row menu still permits Edit and Delete without accidental navigation.
+- [x] 2.3 A user can tap a timeline row, see its entries screen, and return with the back affordance to the same timeline list. — fcea0c6
+- [x] 2.4 Opening the row menu still permits Edit and Delete without accidental navigation. — fcea0c6
 
 ### Phase 3: Integration and regression verification
 
 #### Automated
 
-- [ ] 3.1 `flutter analyze` passes.
-- [ ] 3.2 `flutter test` passes, including repository, entries-screen, timeline-list, auth, retention, and database tests.
-- [ ] 3.3 `flutter build apk --debug` completes successfully.
+- [x] 3.1 `flutter analyze` passes.
+- [x] 3.2 `flutter test` passes, including repository, entries-screen, timeline-list, auth, retention, and database tests.
+- [x] 3.3 `flutter build apk --debug` completes successfully.
 
 #### Manual
 
-- [ ] 3.4 On Android or an emulator, a timeline opens its empty entries screen and back navigation returns to the timeline list.
-- [ ] 3.5 Existing timeline CRUD actions still work from the list, and no unavailable add-entry action is shown.
+- [x] 3.4 On Android or an emulator, a timeline opens its empty entries screen and back navigation returns to the timeline list.
+- [x] 3.5 Existing timeline CRUD actions still work from the list, and no unavailable add-entry action is shown.

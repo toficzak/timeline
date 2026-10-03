@@ -1,7 +1,7 @@
 ---
 change_id: open-readable-timeline
 title: Open timeline entries
-status: implementing
+status: implemented
 created: 2026-10-03
 updated: 2026-10-03
 ---
