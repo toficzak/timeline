@@ -291,23 +291,23 @@ No schema migration is required. Existing timeline names remain valid unless the
 
 #### Automated
 
-- [x] 3.1 Widget tests prove delete is not executed before confirmation and that cancel, success, failure, and pending states behave as specified.
-- [x] 3.2 Tests prove the list is re-read after every successful mutation and retains deterministic ordering.
+- [x] 3.1 Widget tests prove delete is not executed before confirmation and that cancel, success, failure, and pending states behave as specified. — ebf63fd
+- [x] 3.2 Tests prove the list is re-read after every successful mutation and retains deterministic ordering. — ebf63fd
 
 #### Manual
 
-- [x] 3.3 A human can distinguish Edit from Delete, cancel a delete safely, and see the warning that associated entries are removed.
-- [x] 3.4 A confirmed delete removes only the selected timeline; a failed delete leaves it visible with an error message.
+- [x] 3.3 A human can distinguish Edit from Delete, cancel a delete safely, and see the warning that associated entries are removed. — ebf63fd
+- [x] 3.4 A confirmed delete removes only the selected timeline; a failed delete leaves it visible with an error message. — ebf63fd
 
 ### Phase 4: Integration, regression, and Android delivery
 
 #### Automated
 
-- [ ] 4.1 `flutter analyze` passes.
-- [ ] 4.2 `flutter test` passes, including repository, list widget, auth, retention, and database tests.
-- [ ] 4.3 `flutter build apk --debug` completes successfully.
+- [x] 4.1 `flutter analyze` passes.
+- [x] 4.2 `flutter test` passes, including repository, list widget, auth, retention, and database tests.
+- [x] 4.3 `flutter build apk --debug` completes successfully.
 
 #### Manual
 
-- [ ] 4.4 On Android or an emulator, guest mode can create, rename, and delete a local timeline, including canceling a delete.
-- [ ] 4.5 The same local CRUD flow is available after mock or configured Google sign-in; signing out preserves local timelines for guest re-entry.
+- [x] 4.4 On Android or an emulator, guest mode can create, rename, and delete a local timeline, including canceling a delete.
+- [x] 4.5 The same local CRUD flow is available after mock or configured Google sign-in; signing out preserves local timelines for guest re-entry.

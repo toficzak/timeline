@@ -129,6 +129,8 @@ void main() {
 
     expect(find.text('Your private timelines\nperson@example.com'), findsOneWidget);
     expect(find.text('Shared timeline'), findsOneWidget);
+    expect(find.text('Create'), findsOneWidget);
+    expect(find.byTooltip('Actions for Shared timeline'), findsOneWidget);
     expect(find.text('Sign in with Google'), findsNothing);
   });
 
@@ -168,6 +170,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Still local'), findsOneWidget);
+    expect(find.text('Create'), findsOneWidget);
+    expect(find.byTooltip('Actions for Still local'), findsOneWidget);
     expect(find.text('person@example.com'), findsNothing);
     expect(timelines.listCalls, 2);
   });

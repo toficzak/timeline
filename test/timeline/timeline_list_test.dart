@@ -434,6 +434,8 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Private'), findsOneWidget);
+    expect(find.text('Create'), findsOneWidget);
+    expect(find.byTooltip('Actions for Private'), findsOneWidget);
     expect(find.text('Sign in with Google'), findsNothing);
     expect(find.text('Create debug entry'), findsNothing);
   });
@@ -460,6 +462,8 @@ void main() {
 
       expect(find.text('Shared locally'), findsOneWidget);
       expect(find.text('Your private timelines'), findsOneWidget);
+      expect(find.text('Create'), findsOneWidget);
+      expect(find.byTooltip('Actions for Shared locally'), findsOneWidget);
       expect(find.text('person@example.com'), findsNothing);
       expect(find.text('Sign in with Google'), findsOneWidget);
     },
