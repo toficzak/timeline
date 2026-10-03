@@ -291,11 +291,11 @@ No schema migration is required. Existing entries are read through the current
 
 #### Automated
 
-- [x] 3.1 `flutter analyze` passes.
-- [x] 3.2 `flutter test` passes, including repository, entries-screen, timeline-list, auth, retention, and database tests.
-- [x] 3.3 `flutter build apk --debug` completes successfully.
+- [x] 3.1 `flutter analyze` passes. — f8ccb88
+- [x] 3.2 `flutter test` passes, including repository, entries-screen, timeline-list, auth, retention, and database tests. — f8ccb88
+- [x] 3.3 `flutter build apk --debug` completes successfully. — f8ccb88
 
 #### Manual
 
-- [x] 3.4 On Android or an emulator, a timeline opens its empty entries screen and back navigation returns to the timeline list.
-- [x] 3.5 Existing timeline CRUD actions still work from the list, and no unavailable add-entry action is shown.
+- [x] 3.4 On Android or an emulator, a timeline opens its empty entries screen and back navigation returns to the timeline list. — f8ccb88
+- [x] 3.5 Existing timeline CRUD actions still work from the list, and no unavailable add-entry action is shown. — f8ccb88
