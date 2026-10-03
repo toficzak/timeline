@@ -279,25 +279,25 @@ No schema migration is required. Existing timeline names remain valid unless the
 
 #### Automated
 
-- [x] 2.1 Widget tests cover create and edit dialogs, validation, cancellation, pending state, operation errors, and successful list refresh.
-- [x] 2.2 Existing loading, empty, populated, retry, signed-in, and guest list tests remain passing.
+- [x] 2.1 Widget tests cover create and edit dialogs, validation, cancellation, pending state, operation errors, and successful list refresh. — f24e06c
+- [x] 2.2 Existing loading, empty, populated, retry, signed-in, and guest list tests remain passing. — f24e06c
 
 #### Manual
 
-- [x] 2.3 A human can create a timeline from both an empty and populated list, rename it, cancel either form, and see the result without leaving the list.
-- [x] 2.4 A failed save keeps the form open and retains the typed name rather than silently discarding it.
+- [x] 2.3 A human can create a timeline from both an empty and populated list, rename it, cancel either form, and see the result without leaving the list. — f24e06c
+- [x] 2.4 A failed save keeps the form open and retains the typed name rather than silently discarding it. — f24e06c
 
 ### Phase 3: Row actions and confirmed deletion
 
 #### Automated
 
-- [ ] 3.1 Widget tests prove delete is not executed before confirmation and that cancel, success, failure, and pending states behave as specified.
-- [ ] 3.2 Tests prove the list is re-read after every successful mutation and retains deterministic ordering.
+- [x] 3.1 Widget tests prove delete is not executed before confirmation and that cancel, success, failure, and pending states behave as specified.
+- [x] 3.2 Tests prove the list is re-read after every successful mutation and retains deterministic ordering.
 
 #### Manual
 
-- [ ] 3.3 A human can distinguish Edit from Delete, cancel a delete safely, and see the warning that associated entries are removed.
-- [ ] 3.4 A confirmed delete removes only the selected timeline; a failed delete leaves it visible with an error message.
+- [x] 3.3 A human can distinguish Edit from Delete, cancel a delete safely, and see the warning that associated entries are removed.
+- [x] 3.4 A confirmed delete removes only the selected timeline; a failed delete leaves it visible with an error message.
 
 ### Phase 4: Integration, regression, and Android delivery
 

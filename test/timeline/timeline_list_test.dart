@@ -16,15 +16,19 @@ class FakeTimelineRepository implements TimelineRepository {
     this.responses, {
     List<Future<Timeline>>? createResponses,
     List<Future<Timeline>>? updateResponses,
+    List<Future<void>>? deleteResponses,
   }) : createResponses = createResponses ?? <Future<Timeline>>[],
-       updateResponses = updateResponses ?? <Future<Timeline>>[];
+       updateResponses = updateResponses ?? <Future<Timeline>>[],
+       deleteResponses = deleteResponses ?? <Future<void>>[];
 
   final List<Future<List<Timeline>>> responses;
   final List<Future<Timeline>> createResponses;
   final List<Future<Timeline>> updateResponses;
+  final List<Future<void>> deleteResponses;
   int listCalls = 0;
   final List<String> createdNames = <String>[];
   final List<Timeline> updatedTimelines = <Timeline>[];
+  final List<int> deletedTimelineIds = <int>[];
 
   @override
   Future<List<Timeline>> listTimelines() => responses[listCalls++];
@@ -44,7 +48,11 @@ class FakeTimelineRepository implements TimelineRepository {
   }
 
   @override
-  Future<void> deleteTimeline(int timelineId) => throw UnimplementedError();
+  Future<void> deleteTimeline(int timelineId) {
+    deletedTimelineIds.add(timelineId);
+    if (deleteResponses.isNotEmpty) return deleteResponses.removeAt(0);
+    return Future<void>.value();
+  }
 
   @override
   Future<TimelineEntry> createEntry({
@@ -207,7 +215,9 @@ void main() {
     );
     await tester.pumpWidget(listApp(repository));
     await tester.pumpAndSettle();
-    await tester.tap(find.byTooltip('Edit Old name'));
+    await tester.tap(find.byTooltip('Actions for Old name'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Edit'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), 'Renamed');
     await tester.tap(find.text('Save'));
@@ -237,7 +247,9 @@ void main() {
     await tester.pump();
 
     expect(
-      tester.widget<TextButton>(find.widgetWithText(TextButton, 'Cancel')).onPressed,
+      tester
+          .widget<TextButton>(find.widgetWithText(TextButton, 'Cancel'))
+          .onPressed,
       isNull,
     );
     expect(
@@ -246,6 +258,124 @@ void main() {
     );
     save.complete(const Timeline(id: 1, name: 'Pending'));
     await tester.pumpAndSettle();
+  });
+
+  testWidgets('offers row actions and only deletes after confirmation', (
+    tester,
+  ) async {
+    final FakeTimelineRepository repository = FakeTimelineRepository(
+      <Future<List<Timeline>>>[
+        Future<List<Timeline>>.value(const <Timeline>[
+          Timeline(id: 2, name: 'Second'),
+          Timeline(id: 1, name: 'First'),
+        ]),
+        Future<List<Timeline>>.value(const <Timeline>[
+          Timeline(id: 2, name: 'Second'),
+        ]),
+      ],
+    );
+    await tester.pumpWidget(listApp(repository));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Actions for First'));
+    await tester.pumpAndSettle();
+    expect(find.text('Edit'), findsOneWidget);
+    expect(find.text('Delete'), findsOneWidget);
+    await tester.tap(find.text('Delete'));
+    await tester.pumpAndSettle();
+
+    expect(repository.deletedTimelineIds, isEmpty);
+    expect(find.text('Delete "First"?'), findsOneWidget);
+    expect(
+      find.text(
+        'Its associated entries will also be deleted. This cannot be undone.',
+      ),
+      findsOneWidget,
+    );
+    await tester.tap(find.text('Cancel'));
+    await tester.pumpAndSettle();
+    expect(repository.deletedTimelineIds, isEmpty);
+    expect(find.text('First'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Actions for First'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Delete'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Delete').last);
+    await tester.pumpAndSettle();
+
+    expect(repository.deletedTimelineIds, <int>[1]);
+    expect(repository.listCalls, 2);
+    expect(find.text('First'), findsNothing);
+    expect(find.text('Second'), findsOneWidget);
+  });
+
+  testWidgets('disables delete controls while deletion is pending', (
+    tester,
+  ) async {
+    final Completer<void> deletion = Completer<void>();
+    final FakeTimelineRepository repository = FakeTimelineRepository(
+      <Future<List<Timeline>>>[
+        Future<List<Timeline>>.value(const <Timeline>[
+          Timeline(id: 1, name: 'Pending delete'),
+        ]),
+        Future<List<Timeline>>.value(const <Timeline>[]),
+      ],
+      deleteResponses: <Future<void>>[deletion.future],
+    );
+    await tester.pumpWidget(listApp(repository));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Actions for Pending delete'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Delete'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Delete').last);
+    await tester.pump();
+
+    expect(
+      tester.widget<FilledButton>(find.byType(FilledButton).last).onPressed,
+      isNull,
+    );
+    expect(
+      tester
+          .widget<TextButton>(find.widgetWithText(TextButton, 'Cancel'))
+          .onPressed,
+      isNull,
+    );
+    deletion.complete();
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('keeps the row and reports a failed deletion', (tester) async {
+    final Completer<void> deletionFailure = Completer<void>();
+    final FakeTimelineRepository repository = FakeTimelineRepository(
+      <Future<List<Timeline>>>[
+        Future<List<Timeline>>.value(const <Timeline>[
+          Timeline(id: 1, name: 'Keep me'),
+          Timeline(id: 2, name: 'Also keep me'),
+        ]),
+      ],
+      deleteResponses: <Future<void>>[
+        deletionFailure.future,
+      ],
+    );
+    await tester.pumpWidget(listApp(repository));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Actions for Keep me'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Delete'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Delete').last);
+    deletionFailure.completeError(StateError('delete failed'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('Unable to delete timeline. Please try again.'),
+      findsOneWidget,
+    );
+    expect(find.text('Keep me'), findsOneWidget);
+    expect(find.text('Also keep me'), findsOneWidget);
+    expect(repository.listCalls, 1);
   });
 
   testWidgets('shows an error and retries the read', (tester) async {

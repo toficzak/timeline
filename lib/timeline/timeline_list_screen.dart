@@ -16,6 +16,7 @@ class TimelineListScreen extends StatefulWidget {
 
 class _TimelineListScreenState extends State<TimelineListScreen> {
   late Future<List<Timeline>> _timelines;
+  bool _deletePending = false;
 
   @override
   void initState() {
@@ -43,6 +44,11 @@ class _TimelineListScreenState extends State<TimelineListScreen> {
     return 'Unable to load timelines. Please try again.';
   }
 
+  String _deleteErrorMessage(Object error) {
+    if (error is TimelineRepositoryFailure) return error.message;
+    return 'Unable to delete timeline. Please try again.';
+  }
+
   Future<void> _openNameDialog([Timeline? timeline]) async {
     final Timeline? saved = await showDialog<Timeline>(
       context: context,
@@ -54,6 +60,29 @@ class _TimelineListScreenState extends State<TimelineListScreen> {
       ),
     );
     if (saved != null && mounted) _loadTimelines();
+  }
+
+  Future<void> _confirmDelete(Timeline timeline) async {
+    await showDialog<void>(
+      context: context,
+      builder: (context) => _DeleteConfirmationDialog(
+        timeline: timeline,
+        onDelete: (dialogContext) async {
+          if (_deletePending) return;
+          setState(() => _deletePending = true);
+          try {
+            await widget.repository.deleteTimeline(timeline.id);
+            if (mounted && dialogContext.mounted) {
+              Navigator.of(dialogContext).pop();
+              _loadTimelines();
+            }
+          } finally {
+            if (mounted) setState(() => _deletePending = false);
+          }
+        },
+        errorMessage: _deleteErrorMessage,
+      ),
+    );
   }
 
   Widget _createAction() => Align(
@@ -134,10 +163,28 @@ class _TimelineListScreenState extends State<TimelineListScreen> {
                 final Timeline timeline = timelines[index];
                 return ListTile(
                   title: Text(timeline.name),
-                  trailing: IconButton(
-                    tooltip: 'Edit ${timeline.name}',
-                    icon: const Icon(Icons.edit),
-                    onPressed: () => _openNameDialog(timeline),
+                  trailing: PopupMenuButton<_TimelineAction>(
+                    enabled: !_deletePending,
+                    tooltip: 'Actions for ${timeline.name}',
+                    onSelected: (action) {
+                      switch (action) {
+                        case _TimelineAction.edit:
+                          _openNameDialog(timeline);
+                        case _TimelineAction.delete:
+                          _confirmDelete(timeline);
+                      }
+                    },
+                    itemBuilder: (context) =>
+                        const <PopupMenuEntry<_TimelineAction>>[
+                          PopupMenuItem<_TimelineAction>(
+                            value: _TimelineAction.edit,
+                            child: Text('Edit'),
+                          ),
+                          PopupMenuItem<_TimelineAction>(
+                            value: _TimelineAction.delete,
+                            child: Text('Delete'),
+                          ),
+                        ],
                   ),
                 );
               },
@@ -146,5 +193,84 @@ class _TimelineListScreenState extends State<TimelineListScreen> {
         ],
       );
     },
+  );
+}
+
+enum _TimelineAction { edit, delete }
+
+class _DeleteConfirmationDialog extends StatefulWidget {
+  const _DeleteConfirmationDialog({
+    required this.timeline,
+    required this.onDelete,
+    required this.errorMessage,
+  });
+
+  final Timeline timeline;
+  final Future<void> Function(BuildContext dialogContext) onDelete;
+  final String Function(Object error) errorMessage;
+
+  @override
+  State<_DeleteConfirmationDialog> createState() =>
+      _DeleteConfirmationDialogState();
+}
+
+class _DeleteConfirmationDialogState extends State<_DeleteConfirmationDialog> {
+  bool _pending = false;
+  String? _error;
+
+  Future<void> _delete() async {
+    setState(() {
+      _pending = true;
+      _error = null;
+    });
+    try {
+      await widget.onDelete(context);
+    } catch (error) {
+      if (mounted) setState(() => _error = widget.errorMessage(error));
+    } finally {
+      if (mounted) setState(() => _pending = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+    title: const Text('Delete timeline'),
+    content: SizedBox(
+      width: 360,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text('Delete "${widget.timeline.name}"?'),
+          const SizedBox(height: 12),
+          const Text(
+            'Its associated entries will also be deleted. This cannot be undone.',
+          ),
+          if (_error != null) ...<Widget>[
+            const SizedBox(height: 12),
+            Text(
+              _error!,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+          ],
+        ],
+      ),
+    ),
+    actions: <Widget>[
+      TextButton(
+        onPressed: _pending ? null : () => Navigator.of(context).pop(),
+        child: const Text('Cancel'),
+      ),
+      FilledButton(
+        onPressed: _pending ? null : _delete,
+        child: _pending
+            ? const SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Text('Delete'),
+      ),
+    ],
   );
 }
