@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:timelines/timeline/entry_photo_source.dart';
 import 'package:timelines/timeline/local_photo_store.dart';
 import 'package:timelines/timeline/local_timeline_repository.dart';
 import 'package:timelines/timeline/timeline_list_screen.dart';
@@ -20,9 +21,10 @@ Future<void> main() async {
   );
 
   runApp(
-    MainApp(
+      MainApp(
       controller: AuthController(createAuthRepository()),
       repository: repository,
+      photoSource: ImagePickerEntryPhotoSource(),
       database: database,
     ),
   );
@@ -33,27 +35,39 @@ class MainApp extends StatelessWidget {
     required this.controller,
     required this.repository,
     required this.database,
+    required this.photoSource,
     super.key,
   });
 
   final AuthController controller;
   final TimelineRepository repository;
   final db.AppDatabase database;
+  final EntryPhotoSource photoSource;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Timelines',
-      home: AuthGate(controller: controller, repository: repository),
+        home: AuthGate(
+          controller: controller,
+          repository: repository,
+          photoSource: photoSource,
+        ),
     );
   }
 }
 
 class AuthGate extends StatefulWidget {
-  const AuthGate({required this.controller, this.repository, super.key});
+  const AuthGate({
+    required this.controller,
+    this.repository,
+    this.photoSource,
+    super.key,
+  });
 
   final AuthController controller;
   final TimelineRepository? repository;
+  final EntryPhotoSource? photoSource;
 
   @override
   State<AuthGate> createState() => _AuthGateState();
@@ -95,6 +109,7 @@ class _AuthGateState extends State<AuthGate> {
       ),
       AuthStatus.signedIn => _PrivateShell(
         repository: widget.repository,
+        photoSource: widget.photoSource ?? ImagePickerEntryPhotoSource(),
         sessionEmail: controller.session?.email,
         onSignOut: _signOut,
       ),
@@ -106,6 +121,7 @@ class _AuthGateState extends State<AuthGate> {
         _isGuest
             ? _PrivateShell(
                 repository: widget.repository,
+                photoSource: widget.photoSource ?? ImagePickerEntryPhotoSource(),
                 onSignIn: controller.signIn,
                 onSignOut: _leaveGuestMode,
               )
@@ -156,12 +172,14 @@ class _PrivateShell extends StatelessWidget {
   const _PrivateShell({
     this.sessionEmail,
     this.repository,
+    required this.photoSource,
     this.onSignIn,
     required this.onSignOut,
   });
 
   final String? sessionEmail;
   final TimelineRepository? repository;
+  final EntryPhotoSource photoSource;
   final VoidCallback? onSignIn;
   final VoidCallback onSignOut;
 
@@ -198,7 +216,12 @@ class _PrivateShell extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               ),
-              Expanded(child: TimelineListScreen(repository: repository!)),
+               Expanded(
+                 child: TimelineListScreen(
+                   repository: repository!,
+                   photoSource: photoSource,
+                 ),
+               ),
             ],
           ),
   );

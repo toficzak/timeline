@@ -71,7 +71,11 @@ class FakeTimelineRepository implements TimelineRepository {
     required int timelineId,
     required String description,
     File? photo,
+    DateTime? createdAt,
   }) => throw UnimplementedError();
+
+  @override
+  Future<File> resolvePhoto(String relativePath) => throw UnimplementedError();
 
   @override
   Future<TimelineEntry> updateEntry(
@@ -390,9 +394,7 @@ void main() {
           Timeline(id: 2, name: 'Also keep me'),
         ]),
       ],
-      deleteResponses: <Future<void>>[
-        deletionFailure.future,
-      ],
+      deleteResponses: <Future<void>>[deletionFailure.future],
     );
     await tester.pumpWidget(listApp(repository));
     await tester.pumpAndSettle();

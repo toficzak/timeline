@@ -9,6 +9,8 @@ import 'timeline_repository.dart';
 abstract interface class PhotoStore {
   Future<String> importPhoto(File source);
 
+  Future<File> resolvePhoto(String relativePath);
+
   Future<void> deletePhoto(String relativePath);
 }
 
@@ -42,6 +44,20 @@ class LocalPhotoStore implements PhotoStore {
       rethrow;
     }
     return relativePath;
+  }
+
+  @override
+  Future<File> resolvePhoto(String relativePath) async {
+    final String absolutePath = _absolutePath(relativePath);
+    final File file = File(absolutePath);
+    if (await file.exists()) {
+      final String rootPath = await root.resolveSymbolicLinks();
+      final String filePath = await file.resolveSymbolicLinks();
+      if (filePath != rootPath && !p.isWithin(rootPath, filePath)) {
+        throw InvalidPhotoPathFailure(relativePath);
+      }
+    }
+    return file;
   }
 
   @override

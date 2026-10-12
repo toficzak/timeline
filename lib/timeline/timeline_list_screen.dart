@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'entry_photo_source.dart';
 import 'timeline.dart';
 import 'timeline_entries_screen.dart';
 import 'timeline_name_dialog.dart';
@@ -7,9 +8,10 @@ import 'timeline_repository.dart';
 
 /// Displays the locally stored timelines and supports naming operations.
 class TimelineListScreen extends StatefulWidget {
-  const TimelineListScreen({required this.repository, super.key});
+  const TimelineListScreen({required this.repository, this.photoSource, super.key});
 
   final TimelineRepository repository;
+  final EntryPhotoSource? photoSource;
 
   @override
   State<TimelineListScreen> createState() => _TimelineListScreenState();
@@ -170,6 +172,7 @@ class _TimelineListScreenState extends State<TimelineListScreen> {
                         builder: (context) => TimelineEntriesScreen(
                           timeline: timeline,
                           repository: widget.repository,
+                          photoSource: widget.photoSource,
                         ),
                       ),
                     );

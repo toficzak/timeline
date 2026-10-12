@@ -45,23 +45,26 @@ void main() {
     expect((await repository.listTimelines()).single.name, 'Weekends');
   });
 
-  test('rejects blank and whitespace-only timeline names without rows', () async {
-    expect(
-      () => repository.createTimeline(''),
-      throwsA(isA<InvalidTimelineNameFailure>()),
-    );
-    expect(
-      () => repository.createTimeline(' \t\n '),
-      throwsA(isA<InvalidTimelineNameFailure>()),
-    );
+  test(
+    'rejects blank and whitespace-only timeline names without rows',
+    () async {
+      expect(
+        () => repository.createTimeline(''),
+        throwsA(isA<InvalidTimelineNameFailure>()),
+      );
+      expect(
+        () => repository.createTimeline(' \t\n '),
+        throwsA(isA<InvalidTimelineNameFailure>()),
+      );
 
-    final Timeline timeline = await repository.createTimeline('Valid');
-    expect(
-      () => repository.updateTimeline(timeline.copyWith(name: '  ')),
-      throwsA(isA<InvalidTimelineNameFailure>()),
-    );
-    expect(await repository.listTimelines(), [timeline]);
-  });
+      final Timeline timeline = await repository.createTimeline('Valid');
+      expect(
+        () => repository.updateTimeline(timeline.copyWith(name: '  ')),
+        throwsA(isA<InvalidTimelineNameFailure>()),
+      );
+      expect(await repository.listTimelines(), [timeline]);
+    },
+  );
 
   test('accepts duplicate normalized timeline names', () async {
     final Timeline first = await repository.createTimeline('Weekend');
@@ -82,29 +85,32 @@ void main() {
     );
   });
 
-  test('timeline CRUD does not alter another timeline or its entries', () async {
-    final Timeline first = await repository.createTimeline('First');
-    final Timeline second = await repository.createTimeline('Second');
-    final TimelineEntry secondEntry = await repository.createEntry(
-      timelineId: second.id,
-      description: 'keep me',
-    );
+  test(
+    'timeline CRUD does not alter another timeline or its entries',
+    () async {
+      final Timeline first = await repository.createTimeline('First');
+      final Timeline second = await repository.createTimeline('Second');
+      final TimelineEntry secondEntry = await repository.createEntry(
+        timelineId: second.id,
+        description: 'keep me',
+      );
 
-    final Timeline renamed = await repository.updateTimeline(
-      first.copyWith(name: '  Renamed  '),
-    );
-    await repository.deleteTimeline(first.id);
+      final Timeline renamed = await repository.updateTimeline(
+        first.copyWith(name: '  Renamed  '),
+      );
+      await repository.deleteTimeline(first.id);
 
-    expect(renamed.name, 'Renamed');
-    expect(await repository.listTimelines(), [second]);
-    final List<TimelineEntry> remainingEntries = await repository.listEntries(
-      second.id,
-    );
-    expect(remainingEntries, hasLength(1));
-    expect(remainingEntries.single.id, secondEntry.id);
-    expect(remainingEntries.single.timelineId, secondEntry.timelineId);
-    expect(remainingEntries.single.description, secondEntry.description);
-  });
+      expect(renamed.name, 'Renamed');
+      expect(await repository.listTimelines(), [second]);
+      final List<TimelineEntry> remainingEntries = await repository.listEntries(
+        second.id,
+      );
+      expect(remainingEntries, hasLength(1));
+      expect(remainingEntries.single.id, secondEntry.id);
+      expect(remainingEntries.single.timelineId, secondEntry.timelineId);
+      expect(remainingEntries.single.description, secondEntry.description);
+    },
+  );
 
   test('lists timelines in ascending database id order', () async {
     final Timeline first = await repository.createTimeline('First');
@@ -114,40 +120,49 @@ void main() {
     await repository.deleteTimeline(second.id);
     final Timeline fourth = await repository.createTimeline('Fourth');
 
-    expect(
-      (await repository.listTimelines()).map((timeline) => timeline.id),
-      [first.id, third.id, fourth.id],
-    );
+    expect((await repository.listTimelines()).map((timeline) => timeline.id), [
+      first.id,
+      third.id,
+      fourth.id,
+    ]);
   });
 
-  test('performs entry CRUD and keeps entries ordered by creation time', () async {
-    final Timeline timeline = await repository.createTimeline('Journal');
-    final TimelineEntry first = await repository.createEntry(
-      timelineId: timeline.id,
-      description: 'first',
-    );
-    final TimelineEntry second = await repository.createEntry(
-      timelineId: timeline.id,
-      description: 'second',
-    );
-    expect(
-      (await repository.listEntries(timeline.id)).map((entry) => entry.description),
-      ['first', 'second'],
-    );
+  test(
+    'performs entry CRUD and keeps entries ordered by creation time',
+    () async {
+      final Timeline timeline = await repository.createTimeline('Journal');
+      final TimelineEntry first = await repository.createEntry(
+        timelineId: timeline.id,
+        description: 'first',
+      );
+      final TimelineEntry second = await repository.createEntry(
+        timelineId: timeline.id,
+        description: 'second',
+      );
+      expect(
+        (await repository.listEntries(timeline.id))
+            .map((entry) => entry.description),
+        ['first', 'second'],
+      );
 
-    final TimelineEntry updated = first.copyWith(description: 'updated');
-    final TimelineEntry saved = await repository.updateEntry(updated);
-    expect(saved.id, updated.id);
-    expect(saved.timelineId, updated.timelineId);
-    expect(saved.description, 'updated');
-    expect((await repository.listEntries(timeline.id)).first.description, 'updated');
+      final TimelineEntry updated = first.copyWith(description: 'updated');
+      final TimelineEntry saved = await repository.updateEntry(updated);
+      expect(saved.id, updated.id);
+      expect(saved.timelineId, updated.timelineId);
+      expect(saved.description, 'updated');
+      expect(
+        (await repository.listEntries(timeline.id)).first.description,
+        'updated',
+      );
 
-    await repository.deleteEntry(timeline.id, second.id);
-    expect(
-      (await repository.listEntries(timeline.id)).map((entry) => entry.description),
-      ['updated'],
-    );
-  });
+      await repository.deleteEntry(timeline.id, second.id);
+      expect(
+        (await repository.listEntries(timeline.id))
+            .map((entry) => entry.description),
+        ['updated'],
+      );
+    },
+  );
 
   test('stores at most one optional photo as a relative path', () async {
     final Timeline timeline = await repository.createTimeline('Photos');
@@ -163,11 +178,29 @@ void main() {
       photo: File('/source/one.jpg'),
     );
     expect(withPhoto.photoPath, 'entries/photo-1.jpg');
-    final db.Entry row = await (database.select(database.entries)
-          ..where((table) => table.id.equals(withPhoto.id)))
-        .getSingle();
+    final db.Entry row = await (database.select(
+      database.entries,
+    )..where((table) => table.id.equals(withPhoto.id))).getSingle();
     expect(row.photoPath, 'entries/photo-1.jpg');
     expect(withPhoto.photoPath, isNot(startsWith('/')));
+  });
+
+  test('normalizes an explicit creation timestamp to UTC', () async {
+    final Timeline timeline = await repository.createTimeline('Timestamps');
+    final DateTime timestamp = DateTime(2026, 9, 25, 12, 30);
+
+    final TimelineEntry entry = await repository.createEntry(
+      timelineId: timeline.id,
+      description: 'captured',
+      createdAt: timestamp,
+    );
+    final db.Entry row = await (database.select(
+      database.entries,
+    )..where((table) => table.id.equals(entry.id))).getSingle();
+
+    expect(entry.createdAt.isUtc, isTrue);
+    expect(entry.createdAt, timestamp.toUtc());
+    expect(row.createdAt.toUtc(), timestamp.toUtc());
   });
 
   test('replacing and removing a photo clean up the old reference', () async {
@@ -267,6 +300,42 @@ void main() {
     expect(await outside.exists(), isTrue);
   });
 
+  test(
+    'resolves an existing relative photo path below the store root',
+    () async {
+      final Directory root = await Directory(
+        p.join(
+          Directory.systemTemp.path,
+          'timeline-photo-test-${DateTime.now().microsecondsSinceEpoch}',
+        ),
+      ).create();
+      final File photo = File(p.join(root.path, 'entries', 'photo.jpg'));
+      await photo.parent.create(recursive: true);
+      await photo.writeAsString('photo');
+      addTearDown(() => root.delete(recursive: true));
+      final LocalPhotoStore store = LocalPhotoStore(root);
+
+      final File resolved = await store.resolvePhoto('entries/photo.jpg');
+      expect(resolved.path, photo.path);
+    },
+  );
+
+  test('rejects traversal when resolving a photo path', () async {
+    final Directory root = await Directory(
+      p.join(
+        Directory.systemTemp.path,
+        'timeline-photo-test-${DateTime.now().microsecondsSinceEpoch}',
+      ),
+    ).create();
+    addTearDown(() => root.delete(recursive: true));
+    final LocalPhotoStore store = LocalPhotoStore(root);
+
+    expect(
+      () => store.resolvePhoto('../outside-photo.jpg'),
+      throwsA(isA<InvalidPhotoPathFailure>()),
+    );
+  });
+
   test('deleting a timeline cascades to child rows', () async {
     final Timeline timeline = await repository.createTimeline('Cascade');
     await repository.createEntry(timelineId: timeline.id, description: 'child');
@@ -287,6 +356,10 @@ class FakePhotoStore implements PhotoStore {
     _sequence++;
     return 'entries/photo-$_sequence${extension(source.path)}';
   }
+
+  @override
+  Future<File> resolvePhoto(String relativePath) =>
+      Future<File>.value(File(relativePath));
 
   @override
   Future<void> deletePhoto(String relativePath) async {

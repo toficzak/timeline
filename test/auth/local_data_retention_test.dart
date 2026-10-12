@@ -43,5 +43,8 @@ class _FakePhotoStore implements PhotoStore {
   Future<String> importPhoto(File source) async => 'entries/photo.jpg';
 
   @override
+  Future<File> resolvePhoto(String relativePath) => throw UnimplementedError();
+
+  @override
   Future<void> deletePhoto(String relativePath) async {}
 }

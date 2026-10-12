@@ -26,6 +26,9 @@ class _FakeTimelineRepository implements TimelineRepository {
   Future<List<Timeline>> listTimelines() => throw UnimplementedError();
 
   @override
+  Future<File> resolvePhoto(String relativePath) => throw UnimplementedError();
+
+  @override
   Future<Timeline> updateTimeline(Timeline timeline) =>
       throw UnimplementedError();
 
@@ -37,6 +40,7 @@ class _FakeTimelineRepository implements TimelineRepository {
     required int timelineId,
     required String description,
     File? photo,
+    DateTime? createdAt,
   }) => throw UnimplementedError();
 
   @override
@@ -93,7 +97,7 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets('shows an empty message without an add-entry action', (
+  testWidgets('shows an empty message with an add-entry action', (
     tester,
   ) async {
     final _FakeTimelineRepository repository = _FakeTimelineRepository(
@@ -107,8 +111,8 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('No entries yet.'), findsOneWidget);
-    expect(find.textContaining('Add'), findsNothing);
-    expect(find.byIcon(Icons.add), findsNothing);
+    expect(find.text('Add entry'), findsOneWidget);
+    expect(find.byIcon(Icons.add), findsAtLeastNWidgets(1));
   });
 
   testWidgets(

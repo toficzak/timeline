@@ -3,7 +3,7 @@ project: timelines
 version: 1
 status: draft
 created: 2026-09-21
-updated: 2026-10-03
+updated: 2026-10-07
 prd_version: 1
 main_goal: speed
 top_blocker: decisions
@@ -46,6 +46,7 @@ Użytkownik chce zauważać zmiany zachodzące w życiu, ale rozproszone zdjęci
 | S-02 | open-readable-timeline       | użytkownik może wejść w oś, rozróżnić dni i zobaczyć wpisy oraz przycisk dodania | F-02, S-01    | FR-003, FR-004, FR-005             | in-progress |
 | S-03 | local-entry-media-view       | użytkownik może zobaczyć lokalne zdjęcia i opisy wpisów | F-02, S-02    | FR-006                         | blocked  |
 | S-04 | timeline-crud                | użytkownik może tworzyć, zmieniać nazwę i usuwać własne lokalne osie czasu | S-01, F-02 | MVP notes: CRUD osi czasu | in-progress |
+| S-05 | create-timeline-entry        | użytkownik może dodać wpis z opcjonalnym zdjęciem i opisem do wybranej osi | F-02, S-02, S-03 | FR-006, MVP notes: entry creation | in-progress |
 
 ## Streams
 
@@ -54,7 +55,7 @@ Navigation aid — canonical ordering still lives in the dependency graph below.
 | Stream | Theme                    | Chain                         | Note |
 | ------ | ------------------------ | ----------------------------- | ---- |
 | A      | Dostęp i lista osi       | `F-01` → `S-01`                | Najkrótsza ścieżka do szybkiej weryfikacji logowania i własności danych. |
-| B      | Czytelny dziennik        | `F-02` → `S-02` → `S-03`       | Dołącza do Stream A przy `S-02`; prowadzi bezpośrednio do gwiazdy przewodniej. |
+| B      | Czytelny dziennik        | `F-02` → `S-02` → `S-03` → `S-05` | Dołącza do Stream A przy `S-02`; tworzenie wpisu domyka podstawowy zapis dziennika. |
 | C      | Dostarczenie Androida    | `F-03`                        | Niezależna ścieżka weryfikacji wymagana przez środowisko docelowe. |
 
 ## Baseline
@@ -166,6 +167,18 @@ What's already in place in the codebase as of `2026-09-21` (auto-researched + us
 - **Risk:** usunięcie osi kaskadowo usuwa jej wpisy, dlatego akcja wymaga potwierdzenia.
 - **Status:** in-progress
 
+### S-05: Tworzenie wpisu osi czasu
+
+- **Outcome:** użytkownik może dodać do wybranej osi wpis z bieżącą datą i czasem, opcjonalnym zdjęciem oraz opcjonalnym opisem.
+- **Change ID:** create-timeline-entry
+- **PRD refs:** FR-006, MVP notes: dodawanie wpisu ze zdjęciem, Success Criteria: Secondary
+- **Prerequisites:** F-02, S-02, S-03
+- **Parallel with:** S-04
+- **Blockers:** —
+- **Unknowns:** —
+- **Risk:** realna galeria wymaga weryfikacji na Androidzie, a wybór aparatu pozostaje celowo mockiem do czasu osobnej implementacji.
+- **Status:** in-progress
+
 ## Backlog Handoff
 
 | Roadmap ID | Change ID                    | Suggested issue title                         | Ready for `/10x-plan` | Notes |
@@ -176,6 +189,7 @@ What's already in place in the codebase as of `2026-09-21` (auto-researched + us
 | S-01       | signed-in-timeline-list      | Pokazać użytkownikowi jego osie po logowaniu   | no                    | Zaczyna się po F-01. |
 | S-02       | open-readable-timeline       | Otworzyć czytelną oś czasu                     | no                    | Gwiazda przewodnia; czeka na F-02 i S-01. |
 | S-03       | local-entry-media-view       | Pokazać lokalne zdjęcia i opisy wpisów         | no                    | Następuje po widoku osi. |
+| S-05       | create-timeline-entry        | Dodać nowy wpis do osi czasu                   | no                    | Plan zapisany w `context/changes/create-timeline-entry/`; zależy od widoku wpisów. |
 
 ## Open Roadmap Questions
 

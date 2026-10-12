@@ -12,8 +12,10 @@ abstract interface class TimelineRepository {
     required int timelineId,
     required String description,
     File? photo,
+    DateTime? createdAt,
   });
   Future<List<TimelineEntry>> listEntries(int timelineId);
+  Future<File> resolvePhoto(String relativePath);
   Future<TimelineEntry> updateEntry(
     TimelineEntry entry, {
     File? photo,
@@ -33,7 +35,7 @@ sealed class TimelineRepositoryFailure implements Exception {
 
 class TimelineNotFoundFailure extends TimelineRepositoryFailure {
   const TimelineNotFoundFailure(int timelineId)
-      : super('Timeline $timelineId does not exist.');
+    : super('Timeline $timelineId does not exist.');
 }
 
 class InvalidTimelineNameFailure extends TimelineRepositoryFailure {
@@ -42,10 +44,10 @@ class InvalidTimelineNameFailure extends TimelineRepositoryFailure {
 
 class EntryNotFoundFailure extends TimelineRepositoryFailure {
   const EntryNotFoundFailure(int entryId)
-      : super('Entry $entryId does not exist in the requested timeline.');
+    : super('Entry $entryId does not exist in the requested timeline.');
 }
 
 class InvalidPhotoPathFailure extends TimelineRepositoryFailure {
   const InvalidPhotoPathFailure(String path)
-      : super('Invalid photo path: $path');
+    : super('Invalid photo path: $path');
 }

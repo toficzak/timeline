@@ -61,11 +61,15 @@ class GateFakeTimelineRepository implements TimelineRepository {
     required int timelineId,
     required String description,
     File? photo,
+    DateTime? createdAt,
   }) => throw UnimplementedError();
 
   @override
   Future<List<TimelineEntry>> listEntries(int timelineId) =>
       throw UnimplementedError();
+
+  @override
+  Future<File> resolvePhoto(String relativePath) => throw UnimplementedError();
 
   @override
   Future<TimelineEntry> updateEntry(
@@ -79,12 +83,10 @@ class GateFakeTimelineRepository implements TimelineRepository {
       throw UnimplementedError();
 }
 
-Widget appFor(
-  AuthController controller, {
-  TimelineRepository? repository,
-}) => MaterialApp(
-  home: AuthGate(controller: controller, repository: repository),
-);
+Widget appFor(AuthController controller, {TimelineRepository? repository}) =>
+    MaterialApp(
+      home: AuthGate(controller: controller, repository: repository),
+    );
 
 void main() {
   const AuthSession session = AuthSession(
@@ -93,9 +95,7 @@ void main() {
   );
 
   testWidgets('signed-out state shows Google sign-in', (tester) async {
-    final AuthController controller = AuthController(
-      GateFakeRepository(null),
-    );
+    final AuthController controller = AuthController(GateFakeRepository(null));
     await tester.pumpWidget(appFor(controller));
     await tester.pump();
 
@@ -127,7 +127,10 @@ void main() {
     await tester.pumpWidget(appFor(controller, repository: timelines));
     await tester.pumpAndSettle();
 
-    expect(find.text('Your private timelines\nperson@example.com'), findsOneWidget);
+    expect(
+      find.text('Your private timelines\nperson@example.com'),
+      findsOneWidget,
+    );
     expect(find.text('Shared timeline'), findsOneWidget);
     expect(find.text('Create'), findsOneWidget);
     expect(find.byTooltip('Actions for Shared timeline'), findsOneWidget);
@@ -183,7 +186,10 @@ void main() {
     await tester.pumpWidget(appFor(controller));
     await tester.pump();
 
-    expect(find.text('Something went wrong. Please try again.'), findsOneWidget);
+    expect(
+      find.text('Something went wrong. Please try again.'),
+      findsOneWidget,
+    );
     expect(find.text('Try again'), findsOneWidget);
 
     repository.initializeError = null;
@@ -191,7 +197,10 @@ void main() {
     await tester.tap(find.text('Try again'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Your private timelines\nperson@example.com'), findsOneWidget);
+    expect(
+      find.text('Your private timelines\nperson@example.com'),
+      findsOneWidget,
+    );
     expect(repository.initializeCalls, 2);
   });
 
